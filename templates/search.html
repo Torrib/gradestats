@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+ <div class="row">
+  <div class="col-md-4">
+    <form action="/search/" method="get">
+        <input type="text" name="query">
+        <input type="submit" value="Search">
+    </form>
+   </div>
+  </div>
+ </div>
+</div>
+{% endblock content %}

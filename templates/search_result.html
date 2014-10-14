@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+ <div class="row">
+  <div class="col-md-12">
+   <table class="table table-condensed">
+    <tr>
+     <th>Course code</th>
+     <th>Course name</th>
+     <th>average grade</th>
+    </tr>
+    {% for course in courses %}
+     <tr>
+      <td><a href={{ course.get_absolute_url }}>{{ course.code }}</a></td>
+      <td>{{ course.name }}</td>
+      <td>Placeholder</td>
+     </tr>
+    {% endfor %}
+   </table>
+  </div>
+ </div>
+</div>
+{% endblock content %}

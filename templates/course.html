@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+ <div class="row">
+  <div class="col-md-4">
+   <h1>{{ course.code }} - {{ course.name }}</h1>
+   <div id="grades-graph"></div>
+   <div id="grade-buttons" class="btn-group">
+   </div>
+  </div>
+ </div>
+</div>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.jqplot.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jqplot.barRenderer.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jqplot.categoryAxisRenderer.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jqplot.pointLabels.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/gradestats.js"></script>
+    <style href="{{ STATIC_URL }}css/jquery.jqplot.min.css"></style>
+{% endblock content %}
