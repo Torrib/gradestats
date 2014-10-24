@@ -11,6 +11,40 @@ import json
 import requests
 
 
+def login(username, password):
+    session = requests.session()
+    login_data = dict(feidename=username, password=password, org="ntnu.no", asLen="255")
+    page = session.get("https://innsida.ntnu.no/sso/?target=KarstatProd")
+
+    login_url = "https://idp.feide.no/simplesaml/module.php/feide/login.php"
+
+    soup = BeautifulSoup(page.text)
+
+    form = soup.findAll("form", {"name": "f"})[0]
+
+    login_data["AuthState"] = form.findAll("input", {"name": "AuthState"})[0]["value"]
+    login_url += form["action"]
+
+    reply = session.post(login_url, data=login_data)
+    reply_soup = BeautifulSoup(reply.text)
+
+    sso_wrapper_data = dict()
+    sso_wrapper_data["SAMLResponse"] = reply_soup.findAll("input", {"name": "SAMLResponse"})[0]["value"]
+    sso_wrapper_data["RelayState"] = reply_soup.findAll("input", {"name": "RelayState"})[0]["value"]
+
+    sso_wrapper_url = reply_soup.findAll("form")[0]["action"]
+
+    karstat = session.post(sso_wrapper_url, data=sso_wrapper_data)
+
+    karstat_soup = BeautifulSoup(karstat.text)
+
+    karstat_url = "http://www.ntnu.no" + karstat_soup.findAll("form", {"name": "menuform"})[0]["action"]
+
+    session.post(karstat_url, data={"reportType": "2"})
+
+    return session
+
+
 def create_course(code):
     base_url = "http://www.ime.ntnu.no/api/course/"
     resp = requests.get(url=base_url + code)
@@ -42,11 +76,9 @@ def create_course(code):
 
     return course
 
-files = glob.glob('grades_data/*.html')
-for f in files:
-    reader = open(f, 'r')
-    html = reader.read()
-    soup = BeautifulSoup(html, 'html5')
+
+def parse_data(data):
+    soup = BeautifulSoup(data, 'html5')
     tables = soup.find_all('table')
 
     # Semester info
@@ -94,3 +126,32 @@ for f in files:
 
             grades.save()
             print "%s - %s added" % (course, semester_code)
+
+
+def main():
+    karstat_url = "http://www.ntnu.no/karstat/fs582001Action.do"
+    username = ""
+    password = ""
+    session = login(username, password)
+    karstat_data = dict()
+    karstat_data["yearExam"] = "2011"
+    karstat_data["semesterExam"] = "HØST"
+    karstat_data["numberOfYears"] = "0"
+    karstat_data["minCandidates"] = "3"
+
+    # Need to select faculty this way for some reason :(
+    session.get("http://www.ntnu.no/karstat/menuAction.do?faculty=63").text
+
+    grades_data = session.post(karstat_url, data=karstat_data)
+
+    parse_data(grades_data.text)
+
+    return
+
+    files = glob.glob('grades_data/*.html')
+    for f in files:
+        reader = open(f, 'r')
+        html = reader.read()
+        parse_data(html)
+
+main()
