@@ -1,4 +1,6 @@
 $(function() {
+    var graph;
+
     /* AJAX SETUP FOR CSRF */
     $.ajaxSetup({
         crossDomain: false, // obviates need for sameOrigin test
@@ -15,10 +17,9 @@ $(function() {
     /* END AJAX SETUP */
 
     function createGraph(data){
-    data = grades[0];
     $.jqplot.config.enablePlugins = true;
-    var s1 = [data.fields.a, data.fields.b, data.fields.c, data.fields.d, data.fields.e, data.fields.f]
-    var ticks = ['A', 'B', 'C', 'D', 'E', 'F'];
+    s1 = [data.fields.a, data.fields.b, data.fields.c, data.fields.d, data.fields.e, data.fields.f]
+    ticks = ['A', 'B', 'C', 'D', 'E', 'F'];
     graph = $.jqplot('grades-graph', [s1],
     {
         seriesColors: [ "#00CC00", "#00CC33", "#CCFF33", "#FFFF00", "#FF6600", "#CC0000"],
@@ -44,13 +45,32 @@ $(function() {
         },
         grid:{ gridLineColor: '#FFF',}
     });
-   
+    }
+
+    function createButtons(json){
+        for(i = 0; i < json.length; i++){
+            $("#grade-buttons").append("<button type=\"button\" id=" + i + " class=\"btn-grade btn btn-default\">" + json[i].fields.semester_code + "</button>");
+        }
+
+        $(".btn-grade").first().addClass("active");
+        
+        $(".btn-grade").bind('click', function(event){
+            $(".btn-grade").removeClass("active");
+            $(event.target).addClass("active");
+            data = json[event.target.id];
+            s1 = [data.fields.a, data.fields.b, data.fields.c, data.fields.d, data.fields.e, data.fields.f];
+            graph.replot({data:[s1]});
+        });
+    }
+    
+    
 
     $(document).ready(function()
     {
         $.getJSON("grades/", function(json)
         {
-            print(json);
+            createGraph(json[0]);
+            createButtons(json);
         });
     });
 

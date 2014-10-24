@@ -1,32 +1,59 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="col-md-3 sidebar">
+    <div class="well">
+        <ul class="nav nav-list">
+            <li>
+                <div id="grades-graph"></div>
+                <div id="grade-buttons" class="btn-group">
+            </li>
+            <li>
+                <label>Studiepoeng {{ course.credit }}</label>
+            </li>
+            <li>
+                <label>Vår {% if course.tought_in_spring %} 
+                    <span class="glyphicon glyphicon-ok"></span> 
+                {% else %} 
+                    <span class="glyphicon glyphicon-remove"></span>
+                {% endif %}</label>
+            </li>
+            <li>
+                <label>Høst {% if course.tought_in_autumn %} 
+                    <span class="glyphicon glyphicon-ok"></span> 
+                {% else %} 
+                    <span class="glyphicon glyphicon-remove"></span>
+                {% endif %}</label>
+            </li>
+            <li>
+                <label>Engels undervisning {% if course.tought_in_english %} 
+                    <span class="glyphicon glyphicon-ok"></span> 
+                {% else %} 
+                    <span class="glyphicon glyphicon-remove"></span>
+                {% endif %}</label>
+            </li>
+        </ul>
+    </div>
+</div>
 <div class="container">
- <div class="row">
-   <h1>{{ course.code }} - {{ course.english_name }}</h1>
-    <div class="col-md-8">
-        <h2>Faglig Innhold</h2>
-        <p>{{ course.content }}</p>
+    <div class="row">
+        <h1>{{ course.code }} - {{ course.english_name }}</h1>
+        <div class="col-md-8">
+            <h2>Faglig Innhold</h2>
+            <p>{{ course.content }}</p>
+        </div>
     </div>
-    <div class="col-md-4">
-     <div id="grades-graph"></div>
-     <div id="grade-buttons" class="btn-group">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Lærings mål</h2>
+            <p>{{ course.learning_goal }}</p>
+        </div>
     </div>
-   </div>
-   <div class="row">
-    <div class="col-md-8">
-        <h2>Lærings mål</h2>
-        <p>{{ course.learning_goal }}</p>
-    </div>
-  </div>
-  </div>
-  </div>
- </div>
 </div>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.jqplot.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jqplot.barRenderer.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jqplot.categoryAxisRenderer.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jqplot.pointLabels.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/gradestats.js"></script>
-    <style href="{{ STATIC_URL }}css/jquery.jqplot.min.css"></style>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.jqplot.min.css"></link>
 {% endblock content %}
