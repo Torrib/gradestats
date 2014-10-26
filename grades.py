@@ -5,10 +5,10 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gradestats.settings")
 django.setup()
 
 from bs4 import BeautifulSoup
-import glob
 from grades.models import Grade, Course
 import json
 import requests
+import sys
 
 
 def login(username, password):
@@ -48,6 +48,8 @@ def login(username, password):
 def create_course(code):
     base_url = "http://www.ime.ntnu.no/api/course/"
     resp = requests.get(url=base_url + code)
+    if not resp:
+        return None
     data = json.loads(resp.text)
 
     if not data["course"]:
@@ -74,6 +76,7 @@ def create_course(code):
         if info['code'] == u"MÅL" and 'text' in info:
             course.learning_goal = info['text']
 
+    course.save()
     return course
 
 
@@ -103,7 +106,6 @@ def parse_data(data):
             course = create_course(subject_code)
             if not course:
                 continue
-            course.save()
         else:
             course = subjects[0]
 
@@ -119,39 +121,50 @@ def parse_data(data):
             grades.d = int(td_grades[16].string.strip())
             grades.e = int(td_grades[17].string.strip())
 
-            if((grades.a + grades.b + grades.c + grades.d + grades.e) == 0):
-                grades.average_grade = 0;
+            grade_sum = grades.a + grades.b + grades.c + grades.d + grades.e
+            if grade_sum == 0:
+                grades.average_grade = 0
             else:
-                grades.average_grade = ((grades.a * 5) + (grades.b * 4) + (grades.c * 3) + (grades.d * 2) + (grades.e * 1))/(grades.a + grades.b + grades.c + grades.d + grades.e)
+                grades.average_grade = (grades.a * 5) + (grades.b * 4) + (grades.c * 3) + (grades.d * 2) + grades.e / \
+                                                                                                           grade_sum
 
             grades.save()
-            print "%s - %s added" % (course, semester_code)
+            print "%s - %s added" % (course.english_name, semester_code)
 
 
 def main():
+
+    if len(sys.argv) < 3:
+        print "Usage: grades.py username password"
+        exit(1)
+
     karstat_url = "http://www.ntnu.no/karstat/fs582001Action.do"
-    username = ""
-    password = ""
+    username = sys.argv[1]
+    password = sys.argv[2]
     session = login(username, password)
     karstat_data = dict()
-    karstat_data["yearExam"] = "2011"
+    karstat_data["yearExam"] = "2013"
     karstat_data["semesterExam"] = "HØST"
     karstat_data["numberOfYears"] = "0"
     karstat_data["minCandidates"] = "3"
+    karstat_data["yearExam"] = "2013"
 
-    # Need to select faculty this way for some reason :(
-    session.get("http://www.ntnu.no/karstat/menuAction.do?faculty=63").text
-
-    grades_data = session.post(karstat_url, data=karstat_data)
-
-    parse_data(grades_data.text)
-
-    return
-
-    files = glob.glob('grades_data/*.html')
-    for f in files:
-        reader = open(f, 'r')
-        html = reader.read()
-        parse_data(html)
+    # Iterate over years
+    for y in range(2014, 2010):
+        print "Getting data for " + repr(y)
+        karstat_data["yearExam"] = "" + repr(y)
+        # Iterate over faculties
+        for i in range(61, 68):
+            faculty_url = "http://www.ntnu.no/karstat/menuAction.do?faculty=" + repr(i)
+            print "Getting data for faculty " + repr(i)
+            session.get(faculty_url)
+            # Get data for autumn
+            karstat_data["semesterExam"] = "HØST"
+            grades_data = session.post(karstat_url, data=karstat_data)
+            parse_data(grades_data.text)
+            # Get data for spring
+            karstat_data["semesterExam"] = "VÅR"
+            grades_data = session.post(karstat_url, data=karstat_data)
+            parse_data(grades_data.text)
 
 main()
