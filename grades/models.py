@@ -50,12 +50,13 @@ class Grade(models.Model):
 def get_average_grade(**kwargs):
         course = kwargs.get('instance')
         grades = course.grade_set.all()
+        course.average = 0
         for grade in grades:
-            s = grade.a + grade.b + grade.c + grade.d + grade.e + grade.f
-            if s == 0:
-                continue
-            course.average += ((grade.a * 5.0 + grade.b * 4 + grade.c * 3 + grade.d * 2 + grade.e) / s)
-        course.average /= len(grades)
-        return course.average
+            course.average += grade.average_grade
+        if len(grades) == 0:
+            return
+        else:
+            course.average /= len(grades)
+            return
 
 post_init.connect(get_average_grade, Course)

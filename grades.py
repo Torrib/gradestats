@@ -120,14 +120,14 @@ def parse_data(data):
             grades.d = int(td_grades[16].string.strip())
             grades.e = int(td_grades[17].string.strip())
 
-            s = grades.a + grades.b + grades.c + grades.d + grades.e
+            s = grades.a + grades.b + grades.c + grades.d + grades.e + grades.f
             if s == 0:
                 grades.average_grade = 0
             else:
-                grades.average_grade = (grades.a * 5) + (grades.b * 4) + (grades.c * 3) + (grades.d * 2) + grades.e / s
+                grades.average_grade = (grades.a * 5.0 + grades.b * 4 + grades.c * 3 + grades.d * 2 + grades.e) / s
 
             grades.save()
-            print "%s - %s added" % (course.english_name, semester_code)
+            print "%s added" % course.english_name
 
 
 def main():
@@ -147,11 +147,11 @@ def main():
     karstat_data["yearExam"] = "2013"
 
     # Iterate over years
-    for y in range(2014, 2010):
+    for y in range(2013, 2014):
         print "Getting data for " + repr(y)
         karstat_data["yearExam"] = "" + repr(y)
         # Iterate over faculties
-        for i in range(61, 68):
+        for i in range(62, 63):
             faculty_url = "http://www.ntnu.no/karstat/menuAction.do?faculty=" + repr(i)
             print "Getting data for faculty " + repr(i)
             session.get(faculty_url)
