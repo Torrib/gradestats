@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
 import django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gradestats.settings")
-django.setup()
-
 from bs4 import BeautifulSoup
-from grades.models import Grade, Course
 import json
 import requests
 import sys
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gradestats.settings")
+django.setup()
+from grades.models import Grade, Course
 
 
 def login(username, password):
@@ -121,19 +120,17 @@ def parse_data(data):
             grades.d = int(td_grades[16].string.strip())
             grades.e = int(td_grades[17].string.strip())
 
-            grade_sum = grades.a + grades.b + grades.c + grades.d + grades.e
-            if grade_sum == 0:
+            s = grades.a + grades.b + grades.c + grades.d + grades.e
+            if s == 0:
                 grades.average_grade = 0
             else:
-                grades.average_grade = (grades.a * 5) + (grades.b * 4) + (grades.c * 3) + (grades.d * 2) + grades.e / \
-                                                                                                           grade_sum
+                grades.average_grade = (grades.a * 5) + (grades.b * 4) + (grades.c * 3) + (grades.d * 2) + grades.e / s
 
             grades.save()
             print "%s - %s added" % (course.english_name, semester_code)
 
 
 def main():
-
     if len(sys.argv) < 3:
         print "Usage: grades.py username password"
         exit(1)
@@ -166,5 +163,4 @@ def main():
             karstat_data["semesterExam"] = "VÅR"
             grades_data = session.post(karstat_url, data=karstat_data)
             parse_data(grades_data.text)
-
 main()
