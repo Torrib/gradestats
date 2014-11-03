@@ -119,6 +119,7 @@ def parse_data(data):
             grades.semester_code = semester_code
             grades.f = int(td_grades[6].string.strip())
 
+
             passing = attending - grades.f
 
             grades.a = round((int(td_grades[13].string.strip()) / 100.0) * passing)
