@@ -20,6 +20,7 @@ class Course(models.Model):
     learning_form = models.TextField()
     learning_goal = models.TextField()
 
+
     average = 0
 
     def __unicode__(self):
