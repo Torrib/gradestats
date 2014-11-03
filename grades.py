@@ -81,7 +81,7 @@ def create_course(code):
     return course
 
 
-def parse_data(data):
+def parse_data(data, exam):
     soup = BeautifulSoup(data, 'html5')
     tables = soup.find_all('table')
 
@@ -90,7 +90,16 @@ def parse_data(data):
     rows_info = table_info.find_all('tr')
     td_info = rows_info[1].find_all('td')
     temp = td_info[1].string.split('-')
-    semester_code = '%s%s' % (temp[0].strip(), temp[1].strip()[0])
+    semester_code = ""
+
+    if exam == "VÅR":
+        semester_code = "V"
+    elif exam == "SOM":
+        semester_code = "S"
+    elif exam == "HØST":
+        semester_code = "H"
+
+    semester_code += '%s' % (temp[0].strip())
     print "processing %s" % semester_code
 
     # Grade info
@@ -142,6 +151,11 @@ def main():
     karstat_url = "http://www.ntnu.no/karstat/fs582001Action.do"
     username = raw_input("Username: ")
     password = getpass.getpass()
+    from_year = raw_input("From year: ")
+    to_year = raw_input("To year: ")
+    from_faculty = raw_input("From faculty: ")
+    to_faculty = raw_input("To faculty: ")
+
     session = login(username, password)
     karstat_data = dict()
     karstat_data["yearExam"] = "2013"
@@ -150,25 +164,19 @@ def main():
     karstat_data["minCandidates"] = "3"
     karstat_data["yearExam"] = "2013"
 
+    exams = ["VÅR", "SOM", "HØST"]
+
     # Iterate over years
-    for y in range(2010, 2015):
+    for y in range(int(from_year), int(to_year)):
         print "Getting data for " + repr(y)
         karstat_data["yearExam"] = "" + repr(y)
         # Iterate over faculties
-        for i in range(63, 64):
+        for i in range(int(from_faculty), int(to_faculty)):
             faculty_url = "http://www.ntnu.no/karstat/menuAction.do?faculty=" + repr(i)
             print "Getting data for faculty " + repr(i)
             session.get(faculty_url)
-            # Get data for autumn
-            karstat_data["semesterExam"] = "HØST"
-            grades_data = session.post(karstat_url, data=karstat_data)
-            parse_data(grades_data.text)
-            # Get data for spring
-            karstat_data["semesterExam"] = "VÅR"
-            grades_data = session.post(karstat_url, data=karstat_data)
-            parse_data(grades_data.text)
-            # Get data for summer
-            karstat_data["semesterExam"] = "SOM"
-            grades_data = session.post(karstat_url, data=karstat_data)
-            parse_data(grades_data.text)
+            for exam in exams:
+                karstat_data["semesterExam"] = exam
+                grades_data = session.post(karstat_url, data=karstat_data)
+                parse_data(grades_data.text, exam)
 main()
