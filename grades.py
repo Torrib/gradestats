@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import json
 import requests
 import sys
+import getpass
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gradestats.settings")
 django.setup()
 from grades.models import Grade, Course
@@ -67,13 +68,14 @@ def create_course(code):
     course.taught_in_spring = data["course"]["taughtInSpring"]
     course.taught_in_english = data["course"]["taughtInEnglish"]
 
-    for info in data['course']['infoType']:
-        if info['code'] == "INNHOLD" and 'text' in info:
-            course.content = info['text']
-        if info['code'] == u"LÆRFORM" and 'text' in info:
-            course.learning_form = info['text']
-        if info['code'] == u"MÅL" and 'text' in info:
-            course.learning_goal = info['text']
+    if 'infoType' in data['course']:
+        for info in data['course']['infoType']:
+            if info['code'] == "INNHOLD" and 'text' in info:
+                course.content = info['text']
+            if info['code'] == u"LÆRFORM" and 'text' in info:
+                course.learning_form = info['text']
+            if info['code'] == u"MÅL" and 'text' in info:
+                course.learning_goal = info['text']
 
     course.save()
     return course
@@ -111,14 +113,19 @@ def parse_data(data):
         grades = Grade.objects.filter(course=course, semester_code=semester_code)
         if not grades:
             grades = Grade()
+            attending = int(td_grades[5].string.strip())
+
             grades.course = course
             grades.semester_code = semester_code
             grades.f = int(td_grades[6].string.strip())
-            grades.a = int(td_grades[13].string.strip())
-            grades.b = int(td_grades[14].string.strip())
-            grades.c = int(td_grades[15].string.strip())
-            grades.d = int(td_grades[16].string.strip())
-            grades.e = int(td_grades[17].string.strip())
+
+            passing = attending - grades.f
+
+            grades.a = round((int(td_grades[13].string.strip()) / 100.0) * passing)
+            grades.b = round((int(td_grades[14].string.strip()) / 100.0) * passing)
+            grades.c = round((int(td_grades[15].string.strip()) / 100.0) * passing)
+            grades.d = round((int(td_grades[16].string.strip()) / 100.0) * passing)
+            grades.e = round((int(td_grades[17].string.strip()) / 100.0) * passing)
 
             s = grades.a + grades.b + grades.c + grades.d + grades.e + grades.f
             if s == 0:
@@ -131,13 +138,10 @@ def parse_data(data):
 
 
 def main():
-    if len(sys.argv) < 3:
-        print "Usage: grades.py username password"
-        exit(1)
 
     karstat_url = "http://www.ntnu.no/karstat/fs582001Action.do"
-    username = sys.argv[1]
-    password = sys.argv[2]
+    username = raw_input("Username: ")
+    password = getpass.getpass()
     session = login(username, password)
     karstat_data = dict()
     karstat_data["yearExam"] = "2013"
@@ -147,11 +151,11 @@ def main():
     karstat_data["yearExam"] = "2013"
 
     # Iterate over years
-    for y in range(2013, 2014):
+    for y in range(2010, 2015):
         print "Getting data for " + repr(y)
         karstat_data["yearExam"] = "" + repr(y)
         # Iterate over faculties
-        for i in range(62, 63):
+        for i in range(63, 64):
             faculty_url = "http://www.ntnu.no/karstat/menuAction.do?faculty=" + repr(i)
             print "Getting data for faculty " + repr(i)
             session.get(faculty_url)
@@ -161,6 +165,10 @@ def main():
             parse_data(grades_data.text)
             # Get data for spring
             karstat_data["semesterExam"] = "VÅR"
+            grades_data = session.post(karstat_url, data=karstat_data)
+            parse_data(grades_data.text)
+            # Get data for summer
+            karstat_data["semesterExam"] = "SOM"
             grades_data = session.post(karstat_url, data=karstat_data)
             parse_data(grades_data.text)
 main()
