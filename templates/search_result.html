@@ -8,13 +8,13 @@
     <tr>
      <th>Course code</th>
      <th>Course name</th>
-     <th>average grade</th>
+     <th>Average grade</th>
     </tr>
     {% for course in courses %}
      <tr>
-      <td><a href={{ course.get_absolute_url }}>{{ course.code }}</a></td>
-      <td>{{ course.name }}</td>
-      <td>Placeholder</td>
+       <td><a href={{ course.get_absolute_url }}>{{ course.code }}</a></td>
+      <td>{{ course.english_name }} <br /> {{ course.norwegian_name }}</td>
+      <td>{{ course.average|floatformat:-2 }}</td>
      </tr>
     {% endfor %}
    </table>

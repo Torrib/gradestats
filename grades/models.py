@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import permalink
+from django.db.models.signals import post_init
 
 class Course(models.Model):
     norwegian_name = models.CharField("Norwegian Name", max_length=100)
@@ -19,13 +20,15 @@ class Course(models.Model):
     learning_form = models.TextField()
     learning_goal = models.TextField()
 
+    average = 0
 
     def __unicode__(self):
         return self.code
     
     @permalink
     def get_absolute_url(self):
-        return ('course', None, {'course_id': self.id,}) 
+        return 'course', None, {'course_code': self.code, }
+
 
 class Grade(models.Model):
     course = models.ForeignKey(Course)
@@ -33,13 +36,26 @@ class Grade(models.Model):
     
     average_grade = models.FloatField()
 
-    a = models.SmallIntegerField(default = 0)
-    b = models.SmallIntegerField(default = 0)
-    c = models.SmallIntegerField(default = 0)
-    d = models.SmallIntegerField(default = 0)
-    e = models.SmallIntegerField(default = 0)
-    f = models.SmallIntegerField(default = 0)
+    a = models.SmallIntegerField(default=0)
+    b = models.SmallIntegerField(default=0)
+    c = models.SmallIntegerField(default=0)
+    d = models.SmallIntegerField(default=0)
+    e = models.SmallIntegerField(default=0)
+    f = models.SmallIntegerField(default=0)
 
     def __unicode__(self):
         return self.semester_code
-    
+
+
+def get_average_grade(**kwargs):
+        course = kwargs.get('instance')
+        grades = course.grade_set.all()
+        for grade in grades:
+            s = grade.a + grade.b + grade.c + grade.d + grade.e + grade.f
+            if s == 0:
+                continue
+            course.average += ((grade.a * 5.0 + grade.b * 4 + grade.c * 3 + grade.d * 2 + grade.e) / s)
+        course.average /= len(grades)
+        return course.average
+
+post_init.connect(get_average_grade, Course)
