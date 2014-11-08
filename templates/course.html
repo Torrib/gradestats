@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %} {{ block.super }} | {{ course.code }}{% endblock %}
+
 {% block content %}
 <div class="col-md-3 sidebar">
     <div class="well">
@@ -9,24 +11,24 @@
                 <div id="grade-buttons" class="btn-group">
             </li>
             <li>
-                <label>Studiepoeng {{ course.credit }}</label>
+                <label>Studiepoeng {{ course.credit|floatformat:-1 }}</label>
             </li>
             <li>
-                <label>Vår {% if course.tought_in_spring %} 
+                <label>Vår {% if course.taught_in_spring %}
                     <span class="glyphicon glyphicon-ok"></span> 
                 {% else %} 
                     <span class="glyphicon glyphicon-remove"></span>
                 {% endif %}</label>
             </li>
             <li>
-                <label>Høst {% if course.tought_in_autumn %} 
+                <label>Høst {% if course.taught_in_autumn %}
                     <span class="glyphicon glyphicon-ok"></span> 
                 {% else %} 
                     <span class="glyphicon glyphicon-remove"></span>
                 {% endif %}</label>
             </li>
             <li>
-                <label>Engels undervisning {% if course.tought_in_english %} 
+                <label>Engelsk undervisning {% if course.taught_in_english %}
                     <span class="glyphicon glyphicon-ok"></span> 
                 {% else %} 
                     <span class="glyphicon glyphicon-remove"></span>
