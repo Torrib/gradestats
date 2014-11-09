@@ -6,14 +6,14 @@
   <div class="col-md-12">
    <table class="table table-condensed">
     <tr>
-     <th>Course code</th>
-     <th>Course name</th>
-     <th>Average grade</th>
+     <th>Fag kode</th>
+     <th>Navn</th>
+     <th>Gjennomsnitts karakter</th>
     </tr>
     {% for course in courses %}
      <tr>
       <td><a href={{ course.get_absolute_url }}>{{ course.code }}</a></td>
-      <td>{{ course.english_name }} <br /> {{ course.norwegian_name }}</td>
+      <td>{{ course.norwegian_name }}</td>
       <td>{{ course.average|floatformat:-2 }}</td>
      </tr>
     {% endfor %}
