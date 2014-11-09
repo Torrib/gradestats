@@ -3,52 +3,60 @@
 {% block title %} {{ block.super }} | {{ course.code }}{% endblock %}
 
 {% block content %}
-<div class="col-md-3 sidebar">
-    <div class="well">
-        <ul class="nav nav-list">
-            <li>
-                <div id="grades-graph"></div>
-                <div id="grade-buttons" class="btn-group">
-            </li>
-            <li>
-                <label>Studiepoeng {{ course.credit|floatformat:-1 }}</label>
-            </li>
-            <li>
-                <label>Vår {% if course.taught_in_spring %}
-                    <span class="glyphicon glyphicon-ok"></span> 
-                {% else %} 
-                    <span class="glyphicon glyphicon-remove"></span>
-                {% endif %}</label>
-            </li>
-            <li>
-                <label>Høst {% if course.taught_in_autumn %}
-                    <span class="glyphicon glyphicon-ok"></span> 
-                {% else %} 
-                    <span class="glyphicon glyphicon-remove"></span>
-                {% endif %}</label>
-            </li>
-            <li>
-                <label>Engelsk undervisning {% if course.taught_in_english %}
-                    <span class="glyphicon glyphicon-ok"></span> 
-                {% else %} 
-                    <span class="glyphicon glyphicon-remove"></span>
-                {% endif %}</label>
-            </li>
-        </ul>
+<div class="row">
+    <div class="col-md-8">
+        <h1>{{ course.code }} - {{ course.english_name }}</h1>
     </div>
 </div>
-<div class="container">
-    <div class="row">
-        <h1>{{ course.code }} - {{ course.english_name }}</h1>
-        <div class="col-md-8">
-            <h2>Faglig Innhold</h2>
-            <p>{{ course.content }}</p>
+<div class="row">
+    <div class="col-md-8">
+        <h2>Faglig Innhold</h2>
+        <p>{{ course.content }}</p>
+    </div>
+    <div class="col-md-4">
+        <div class="well">
+            <ul class="nav nav-list">
+                <li>
+                    <div id="grades-graph"></div>
+                    <div id="grade-buttons" class="btn-group">
+                </li>
+            </ul>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-8">
-            <h2>Lærings mål</h2>
-            <p>{{ course.learning_goal }}</p>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <h2>Lærings mål</h2>
+        <p>{{ course.learning_goal }}</p>
+    </div>
+    <div class="col-md-4">
+        <div class="well">
+            <ul class="nav nav-list">
+                <li>
+                    <label>Studiepoeng {{ course.credit|floatformat:-1 }}</label>
+                </li>
+                <li>
+                    <label>Vår {% if course.taught_in_spring %}
+                        <span class="glyphicon glyphicon-ok"></span> 
+                    {% else %} 
+                        <span class="glyphicon glyphicon-remove"></span>
+                    {% endif %}</label>
+                </li>
+                <li>
+                    <label>Høst {% if course.taught_in_autumn %}
+                        <span class="glyphicon glyphicon-ok"></span> 
+                    {% else %} 
+                        <span class="glyphicon glyphicon-remove"></span>
+                    {% endif %}</label>
+                </li>
+                <li>
+                    <label>Engelsk undervisning {% if course.taught_in_english %}
+                        <span class="glyphicon glyphicon-ok"></span> 
+                    {% else %} 
+                        <span class="glyphicon glyphicon-remove"></span>
+                    {% endif %}</label>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
