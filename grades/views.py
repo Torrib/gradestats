@@ -28,7 +28,7 @@ def search(request):
         query = request.GET['query']
         courses = Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
                                         Q(short_name__icontains=query) | Q(code__icontains=query))
-        return render(request, 'search_result.html', {'courses': courses, 'query': query})
+        return render(request, 'index.html', {'courses': courses, 'query': query})
     else:
         return render(request, 'search.html') 
     
