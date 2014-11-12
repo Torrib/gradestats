@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.core import serializers
 from django.db.models import Q
@@ -33,6 +33,17 @@ def course(request, course_code):
     tags = list(Tag.objects.filter(course=course))
 
     return render(request, 'course.html', {'course': course, 'tags': tags})
+
+
+def add_tag(request, course_code):
+    course = get_object_or_404(Course, code=course_code)
+    tag = Tag()
+    tag.course = course
+    tag.tag = request.POST['tag']
+
+    tag.save()
+
+    return redirect('course', course_code=course_code)
 
 
 def get_grades(request, course_code):

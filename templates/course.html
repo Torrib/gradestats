@@ -51,11 +51,24 @@
 
         <div class="well">
             <h4>Tags</h4>
-                <div class="tags">
-                {% for tag in tags %}
-                    <button type="button" class="btn disabled btn-default">{{ tag.tag }}</button>
-                {% endfor %}
-                </div>
+            <ul class="nav nav-list">
+                <li>
+                     <div class="tags">
+                    {% for tag in tags %}
+                      
+                        <a href="/search?query={{ tag.tag }}" class="btn btn-default" role="button">{{ tag.tag }}</a>
+                    {% endfor %}
+                    </div>
+                    <br />
+                </li>
+                <li>
+                    <form class="form-inline" action="tags/add/" method="POST">
+                        {%  csrf_token %}
+                        <input name="tag" type="text" placeholder="tag (maks 32 tegn)" class="form-control input-sm" />
+                        <button type="submit" class="btn btn-sm btn-primary">Legg til</button>
+                    </form>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
