@@ -48,6 +48,15 @@
                 </li>
             </ul>
         </div>
+
+        <div class="well">
+            <h4>Tags</h4>
+                <div class="tags">
+                {% for tag in tags %}
+                    <button type="button" class="btn disabled btn-default">{{ tag.tag }}</button>
+                {% endfor %}
+                </div>
+        </div>
     </div>
 </div>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.jqplot.min.js"></script>

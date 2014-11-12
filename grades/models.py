@@ -2,11 +2,12 @@ from django.db import models
 from django.db.models import permalink
 from django.db.models.signals import post_init
 
+
 class Course(models.Model):
     norwegian_name = models.CharField("Norwegian Name", max_length=100)
     short_name = models.CharField("Short name", max_length=50)
     code = models.CharField("Code", max_length=15)
-    faculty_code = models.IntegerField("Faculty Code");
+    faculty_code = models.IntegerField("Faculty Code", default=0)
 
     english_name = models.CharField("English name", max_length=100)
     credit = models.FloatField("Credit", default=7.5)
@@ -49,6 +50,14 @@ class Grade(models.Model):
 
     def get_num_attendees(self):
         return self.a + self.b + self.c + self.d + self.e + self.f
+
+
+class Tag(models.Model):
+    course = models.ForeignKey(Course)
+    tag = models.CharField("Tag text", max_length=32)
+
+    def __unicode__(self):
+        return self.tag
 
 
 def get_average_grade(**kwargs):

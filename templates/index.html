@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-12">
             <form class="form-inline" method="GET">
-                <select name="faculty_code">
+                <select class="form-control" name="faculty_code">
                     <option value="61">Fakultet for arkitektur og billedkunst</option>
                     <option value="62">Det humanistiske fakultet</option>
                     <option value="63">Fakultet for informasjonsteknologi, matematikk og elektroteknikk</option>
@@ -15,26 +15,30 @@
                     <option value="67">Fakultet for samfunnsvitenskap og teknologiledelse</option>
                 </select>
                 <input class="btn btn-primary" type="submit" value="Filtrer" />
+
             </form>
+            <br />
+            <table class="table table-striped table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Fagkode</th>
+                        <th>Navn</th>
+                        <th>Gjennomsnittskarakter</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for course in courses %}
+                {% if course.average > -1 %}
 
-            <table class="table table-hover">
+                    <tr onclick="document.location='{{ course.get_absolute_url }}';">
+                        <td>{{ course.code }}</td>
+                        <td>{{ course.norwegian_name }}</td>
+                        <td>{{ course.average|floatformat:-2 }}</td>
+                    </tr>
 
-            <tr>
-                <th>Fagkode</th>
-                <th>Navn</th>
-                <th>Gjennomsnittskarakter</th>
-            </tr>
-            {% for course in courses %}
-            {% if course.average > -1 %}
-            
-                <tr onclick="document.location='{{ course.get_absolute_url }}';">
-                    <td>{{ course.code }}</td>
-                    <td>{{ course.norwegian_name }}</td>
-                    <td>{{ course.average|floatformat:-2 }}</td>
-                </tr>
-            
-            {% endif %}
-            {% endfor %}
+                {% endif %}
+                {% endfor %}
+                </tbody>
             </table>
             {% if courses.paginator.num_pages > 1 %}
                 <div class="container-fluid text-center">
