@@ -45,7 +45,7 @@ def login(username, password):
     return session
 
 
-def create_course(code):
+def create_course(code, faculty):
     base_url = "http://www.ime.ntnu.no/api/course/"
     resp = requests.get(url=base_url + code)
     if not resp:
@@ -76,7 +76,7 @@ def create_course(code):
                 course.learning_form = info['text']
             if info['code'] == u"MÅL" and 'text' in info:
                 course.learning_goal = info['text']
-
+    course.faculty_code = faculty
     course.save()
     return course
 
@@ -113,10 +113,9 @@ def parse_data(data, exam, faculty):
         if not subjects:
             if "AVH" in subject_code:
                 continue
-            course = create_course(subject_code)
+            course = create_course(subject_code, faculty)
             if not course:
                 continue
-            course.faculty_code = faculty
         else:
             course = subjects[0]
 
