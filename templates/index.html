@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-condensed">
+            <table class="table table-hover">
             <tr>
                 <th>Fagkode</th>
                 <th>Navn</th>
@@ -12,11 +12,13 @@
             </tr>
             {% for course in courses %}
             {% if course.average > -1 %}
-                <tr>
-                    <td><a href={{ course.get_absolute_url }}>{{ course.code }}</a></td>
+            
+                <tr onclick="document.location='{{ course.get_absolute_url }}';">
+                    <td>{{ course.code }}</td>
                     <td>{{ course.norwegian_name }}</td>
                     <td>{{ course.average|floatformat:-2 }}</td>
                 </tr>
+            
             {% endif %}
             {% endfor %}
             </table>

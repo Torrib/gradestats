@@ -1,32 +1,20 @@
+.btn-primary {
+	background-color: #577492;
+}
+.btn-primary:hover {
+	background-color: #3D5166;
+}
 
-<<<<<<< HEAD
-=======
-.sidebar {
-    position: fixed;
-    left: 50%;
-    top: 60px;
-    width: 295px;                   /* Same width as .span3 */
-    /*margin-left: -700px;*/
-    margin-left: 250px;
-} .sidebar .well {
-    padding: 0em 0px ;
-} .sidebar .nav {
-    text-align: center;
-    margin: 0px -1px;
-    padding: 0px;
-} .sidebar .nav li {
-    overflow-x: hidden;
-} .sidebar .nav li:not(.active) {
-    padding: 4px 0px;
-    margin-left: 1px;
-    margin-right: 1px;
+tr:hover {
+	cursor: pointer;
 }
 
 .navbar {
   margin-top: 5px;
-  margin-right: 97px;
-  margin-left: 130px;
+  margin-right: 5%;
+  margin-left: 5%;
 }
+
 
 .navbar-brand {
     margin-left: 25px;
@@ -91,4 +79,3 @@
         background-color: #3D5166;
     }
 }
->>>>>>> Customized navbar layout
