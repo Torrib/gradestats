@@ -20,7 +20,6 @@ class Course(models.Model):
     learning_form = models.TextField()
     learning_goal = models.TextField()
 
-
     average = 0
 
     def __unicode__(self):
@@ -55,12 +54,14 @@ def get_average_grade(**kwargs):
         course = kwargs.get('instance')
         grades = course.grade_set.all()
         course.average = 0
+        attendees = 0
         for grade in grades:
-            course.average += grade.average_grade
-        if len(grades) == 0:
+            attendees += grade.get_num_attendees()
+            course.average += (grade.average_grade * grade.get_num_attendees())
+        if attendees == 0:
             return
         else:
-            course.average /= len(grades)
+            course.average /= attendees
             return
 
 post_init.connect(get_average_grade, Course)
