@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.core import serializers
@@ -53,6 +54,7 @@ def faculty_filter(request, faculty_code):
 
     return render(request, 'index.html', {'courses': courses})
 
+
 def search(request):
     if 'query' in request.GET and request.GET['query']:
         query = request.GET['query']
@@ -77,8 +79,13 @@ def search(request):
 
 
 def report(request):
-    if 'course' in request.GET and request.GET['course']:
-        return render(request, 'report.html', {'sent': True})
+    if 'course' in request.POST and request.POST['course']:
+        messages = []
+        message = {}
+        message['tags'] = 'success'
+        message['message'] = u"Takk for at du hjelper til med å gjøre denne siden bedre!"
+        messages.append(message)
+        return render(request, 'report.html', {'messages': messages})
     else:
         return render(request, 'report.html')
 

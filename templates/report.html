@@ -5,10 +5,8 @@
 {% block content %}
 <div class="row">
 <div class="col-md-8">
-{% if sent %}
-    <h2>Takk for at du hjelper til med å gjøre denne siden bedre!</h2>
-{% endif %}
-<form class="form-horizontal" method="get">
+<form  class="form-horizontal" method="POST">
+    {%  csrf_token %}
     <fieldset>
 
     <!-- Form Name -->

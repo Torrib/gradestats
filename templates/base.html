@@ -22,6 +22,10 @@
              else if(url.indexOf("report") > -1)
                 navbar.children[2].className += ' active';
         });
+
+        setTimeout(function() {
+            $("#message-list").children('.alert:first-child').remove();
+        }, 5000);
 </script>
 </head>
 <body>
@@ -49,11 +53,11 @@
         {% if messages %}
             <div class="container messages">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div id="message-list" class="col-md-12">
                         {% for message in messages %}
                             <div class="alert alert-{{ message.tags }}" data-alert>
                                 <button type="button" class="close"  data-dismiss="alert">&times;</button>
-                                <p>{{ message }}</p>
+                                <p>{{ message.message }}</p>
                             </div>
                         {% endfor %}
                     </div>

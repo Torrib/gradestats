@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <form method="GET">
+            <form class="form-inline" method="GET">
                 <select name="faculty_code">
                     <option value="61">Fakultet for arkitektur og billedkunst</option>
                     <option value="62">Det humanistiske fakultet</option>
@@ -14,8 +14,9 @@
                     <option value="66">Fakultet for naturvitenskap og teknologi</option>
                     <option value="67">Fakultet for samfunnsvitenskap og teknologiledelse</option>
                 </select>
-                <input type="submit" value="Filtrer" />
+                <input class="btn btn-primary" type="submit" value="Filtrer" />
             </form>
+
             <table class="table table-hover">
 
             <tr>
@@ -38,7 +39,7 @@
             {% if courses.paginator.num_pages > 1 %}
                 <div class="container-fluid text-center">
                     {% if courses.has_previous %}
-                        <a href="?page={{ courses.previous_page_number }}"><<</a>
+                        <a href="?page={{ courses.previous_page_number }}{% if query %}&query={{ query }}{% endif %}"><<</a>
                     {% else %}
                         <<
                     {% endif %}
@@ -46,7 +47,7 @@
                     {{ courses.number }} av {{ courses.paginator.num_pages }}
 
                     {% if courses.has_next %}
-                        <a href="?page={{ courses.next_page_number }}">>></a>
+                        <a href="?page={{ courses.next_page_number }}{% if query %}&query={{ query }}{% endif %}">>></a>
                      {% else %}
                         >>
                     {% endif %}
