@@ -45,7 +45,7 @@ def login(username, password):
     return session
 
 
-def create_course(code):
+def create_course(code, faculty):
     base_url = "http://www.ime.ntnu.no/api/course/"
     resp = requests.get(url=base_url + code)
     if not resp:
@@ -76,12 +76,12 @@ def create_course(code):
                 course.learning_form = info['text']
             if info['code'] == u"MÅL" and 'text' in info:
                 course.learning_goal = info['text']
-
+    course.faculty_code = faculty
     course.save()
     return course
 
 
-def parse_data(data, exam):
+def parse_data(data, exam, faculty):
     soup = BeautifulSoup(data, 'html5')
     tables = soup.find_all('table')
 
@@ -113,7 +113,7 @@ def parse_data(data, exam):
         if not subjects:
             if "AVH" in subject_code:
                 continue
-            course = create_course(subject_code)
+            course = create_course(subject_code, faculty)
             if not course:
                 continue
         else:
@@ -178,5 +178,5 @@ def main():
             for exam in exams:
                 karstat_data["semesterExam"] = exam
                 grades_data = session.post(karstat_url, data=karstat_data)
-                parse_data(grades_data.text, exam)
+                parse_data(grades_data.text, exam, i)
 main()
