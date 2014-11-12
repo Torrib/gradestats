@@ -55,11 +55,10 @@
                 <li>
                      <div class="tags">
                     {% for tag in tags %}
-                      
-                        <a href="/search?query={{ tag.tag }}" class="btn btn-default" role="button">{{ tag.tag }}</a>
+
+                        <a href="/search?query={{ tag.tag }}" class="btn btn-default btn-sm btn-tag" role="button">{{ tag.tag }}</a>
                     {% endfor %}
                     </div>
-                    <br />
                 </li>
                 <li>
                     <form class="form-inline" action="tags/add/" method="POST">
@@ -77,5 +76,5 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/jqplot.categoryAxisRenderer.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jqplot.pointLabels.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/gradestats.js"></script>
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.jqplot.min.css"></link>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.jqplot.min.css" />
 {% endblock content %}

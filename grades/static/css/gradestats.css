@@ -5,6 +5,14 @@
 	background-color: #3D5166;
 }
 
+.tags {
+    margin-bottom: 5px;
+}
+
+.btn-tag {
+    margin-bottom: 5px;
+}
+
 tbody > tr:hover {
 	cursor: pointer;
     text-decoration: underline;
