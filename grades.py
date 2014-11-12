@@ -81,7 +81,7 @@ def create_course(code):
     return course
 
 
-def parse_data(data, exam):
+def parse_data(data, exam, faculty):
     soup = BeautifulSoup(data, 'html5')
     tables = soup.find_all('table')
 
@@ -116,6 +116,7 @@ def parse_data(data, exam):
             course = create_course(subject_code)
             if not course:
                 continue
+            course.faculty_code = faculty
         else:
             course = subjects[0]
 
@@ -178,5 +179,5 @@ def main():
             for exam in exams:
                 karstat_data["semesterExam"] = exam
                 grades_data = session.post(karstat_url, data=karstat_data)
-                parse_data(grades_data.text, exam)
+                parse_data(grades_data.text, exam, i)
 main()
