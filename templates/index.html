@@ -2,23 +2,42 @@
 
 {% block content %}
 <div class="container">
- <div class="row">
-  <div class="col-md-12">
-   <table class="table table-condensed">
-    <tr>
-     <th>Fag kode</th>
-     <th>Navn</th>
-     <th>Gjennomsnitts karakter</th>
-    </tr>
-    {% for course in courses %}
-     <tr>
-      <td><a href={{ course.get_absolute_url }}>{{ course.code }}</a></td>
-      <td>{{ course.norwegian_name }}</td>
-      <td>{{ course.average|floatformat:-2 }}</td>
-     </tr>
-    {% endfor %}
-   </table>
-  </div>
- </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-condensed">
+            <tr>
+                <th>Fagkode</th>
+                <th>Navn</th>
+                <th>Gjennomsnittskarakter</th>
+            </tr>
+            {% for course in courses %}
+            {% if course.average > -1 %}
+                <tr>
+                    <td><a href={{ course.get_absolute_url }}>{{ course.code }}</a></td>
+                    <td>{{ course.norwegian_name }}</td>
+                    <td>{{ course.average|floatformat:-2 }}</td>
+                </tr>
+            {% endif %}
+            {% endfor %}
+            </table>
+            {% if courses.paginator.num_pages > 1 %}
+                <div class="container-fluid text-center">
+                    {% if courses.has_previous %}
+                        <a href="?page={{ courses.previous_page_number }}"><<</a>
+                    {% else %}
+                        <<
+                    {% endif %}
+
+                    {{ courses.number }} av {{ courses.paginator.num_pages }}
+
+                    {% if courses.has_next %}
+                        <a href="?page={{ courses.next_page_number }}">>></a>
+                     {% else %}
+                        >>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock content %}

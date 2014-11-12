@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %} {{ block.super }} | Feil{% endblock %}
+
+{% block content %}
+<div class="row">
+<div class="col-md-8">
+{% if sent %}
+    <h2>Takk for at du hjelper til med å gjøre denne siden bedre!</h2>
+{% endif %}
+<form class="form-horizontal" method="get">
+    <fieldset>
+
+    <!-- Form Name -->
+    <legend>Rapporter feil</legend>
+
+    <!-- Text input-->
+    <div class="control-group">
+      <label class="control-label" for="course">Fagkode: </label>
+      <div class="controls">
+        <input id="course" name="course" type="text" placeholder="eks: IT2901" class="form-control input-lg">
+      </div>
+    </div>
+
+    <!-- Text input-->
+    <div class="control-group">
+      <label class="control-label" for="term">Semester: </label>
+      <div class="controls">
+        <input id="term" name="term" type="text" placeholder="eks: V2010" class="form-control input-lg">
+
+      </div>
+    </div>
+
+    <!-- Textarea -->
+    <div class="control-group">
+      <label class="control-label" for="description">Beskrivelse: </label>
+      <div class="controls">
+        <textarea rows="7" id="description" class="form-control input-lg" name="description"></textarea>
+      </div>
+    </div>
+
+    <!-- Button -->
+    <div class="control-group">
+      <label class="control-label" for="report"></label>
+      <div class="controls">
+        <button id="report" name="report" class="btn btn-primary">Rapporter</button>
+      </div>
+    </div>
+
+    </fieldset>
+</form>
+</div>
+</div>
+{% endblock content %}

@@ -47,6 +47,9 @@ class Grade(models.Model):
     def __unicode__(self):
         return self.semester_code
 
+    def get_num_attendees(self):
+        return self.a + self.b + self.c + self.d + self.e + self.f
+
 
 def get_average_grade(**kwargs):
         course = kwargs.get('instance')

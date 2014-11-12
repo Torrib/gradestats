@@ -1,14 +1,20 @@
 {% extends "base.html" %}
 
+{% block title %} {{ block.super }} | Søk {% endblock %}
+
 {% block content %}
 <div class="row">
+<div class="col-md-8">
     <form class="form-horizontal" action="/search/" method="get">
-        <div class="form-group form-inline">
-            <div class="controls">
-                <input id="text" name="query" type="text" class="form-control input-lg">
+    <fieldset>
+        <!-- Form Name -->
+        <legend>Søk</legend>
+        <div class="control-group form-inline">
+                <input id="text" name="query" type="text" class="form-control input-lg" />
                 <button type="submit" class="input-lg btn btn-primary">Søk</button>
-            </div>
         </div>
+    </fieldset>
     </form>
+</div>
 </div>
 {% endblock content %}

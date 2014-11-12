@@ -19,6 +19,8 @@
                 navbar.children[0].className += ' active';
             else if(url.indexOf("search") > -1)
                 navbar.children[1].className += ' active';
+             else if(url.indexOf("report") > -1)
+                navbar.children[2].className += ' active';
         });
 </script>
 </head>
@@ -26,7 +28,7 @@
     <nav class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigationlist">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -34,10 +36,11 @@
                 </button>
                 <a class="navbar-brand" href="/index">Gradestats</a>
             </div>
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div class="collapse navbar-collapse" id="navigationlist">
                 <ul id="navbar" class="nav navbar-nav">
                     <li class="navbar-item"><a href="/index/">Fag</a></li>
                     <li class="navbar-item"><a href="/search/">Søk</a></li>
+                    <li class="navbar-item"><a href="/report/">Rapporter feil</a></li>
                 </ul>
             </div>
         </div>
@@ -61,7 +64,8 @@
            {% block content %}
            {% endblock%}
         </div>
-        <div class="navbar navbar-default navbar-fixed-bottom">
+        <br />
+        <div class="navbar navbar-default navbar-bottom">
             <div class="container-fluid">
                 <p class="navbar-text pull-left">IT2805 2014</p>
                 <p class="navbar-text pull-right">Tor-Håkon Bonsaksen, Lars Erik Græsdal-Knutrud, Håvard Lian</p>
