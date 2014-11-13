@@ -21,14 +21,16 @@ $(function() {
     if(data.fields.passed === 0){
         s1 = [data.fields.a, data.fields.b, data.fields.c, data.fields.d, data.fields.e, data.fields.f]
         ticks = ['A', 'B', 'C', 'D', 'E', 'F'];
+        colors = [ "#00CC00", "#00CC33", "#CCFF33", "#FFFF00", "#FF6600", "#CC0000"];
     }
     else{
         s1 = [data.fields.passed, data.fields.f]
         ticks = ['Bestått', 'Ikke bestått']
+        colors = [ "#00CC00", "#CC0000"];
     }
     graph = $.jqplot('grades-graph', [s1],
     {
-        seriesColors: [ "#00CC00", "#00CC33", "#CCFF33", "#FFFF00", "#FF6600", "#CC0000"],
+        seriesColors: colors,
         
         seriesDefaults:
         {
@@ -64,7 +66,12 @@ $(function() {
             $(".btn-grade").removeClass("active");
             $(event.target).addClass("active");
             data = json[event.target.id];
-            s1 = [data.fields.a, data.fields.b, data.fields.c, data.fields.d, data.fields.e, data.fields.f];
+            if(data.fields.passed === 0){
+                s1 = [data.fields.a, data.fields.b, data.fields.c, data.fields.d, data.fields.e, data.fields.f];
+            }
+            else{
+                s1 = [data.fields.passed, data.fields.f];
+            }
             graph.replot({data:[s1]});
         });
     }
