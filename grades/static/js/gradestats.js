@@ -17,42 +17,43 @@ $(function() {
     /* END AJAX SETUP */
 
     function createGraph(data){
-    $.jqplot.config.enablePlugins = true;
-    if(data.fields.passed === 0){
-        s1 = [data.fields.a, data.fields.b, data.fields.c, data.fields.d, data.fields.e, data.fields.f]
-        ticks = ['A', 'B', 'C', 'D', 'E', 'F'];
-        colors = [ "#00CC00", "#00CC33", "#CCFF33", "#FFFF00", "#FF6600", "#CC0000"];
-    }
-    else{
-        s1 = [data.fields.passed, data.fields.f]
-        ticks = ['Bestått', 'Ikke bestått']
-        colors = [ "#00CC00", "#CC0000"];
-    }
-    graph = $.jqplot('grades-graph', [s1],
-    {
-        seriesColors: colors,
-        
-        seriesDefaults:
+        $.jqplot.config.enablePlugins = true;
+        var s1, ticks, colors;
+        if(data.fields.passed === 0){
+            s1 = [data.fields.a, data.fields.b, data.fields.c, data.fields.d, data.fields.e, data.fields.f]
+            ticks = ['A', 'B', 'C', 'D', 'E', 'F'];
+            colors = [ "#00CC00", "#00CC33", "#CCFF33", "#FFFF00", "#FF6600", "#CC0000"];
+        }
+        else{
+            s1 = [data.fields.passed, data.fields.f]
+            ticks = ['Bestått', 'Ikke bestått']
+            colors = [ "#00CC00", "#CC0000"];
+        }
+        graph = $.jqplot('grades-graph', [s1],
         {
-            renderer:$.jqplot.BarRenderer,
-            pointLabels: { show: true, formatString: '%d', formatter: $.jqplot.DefaultTickFormatter},
-            rendererOptions: { barMargin: 2, varyBarColor: true}
-        },
-        axes:
-        {
-            xaxis: 
+            seriesColors: colors,
+
+            seriesDefaults:
             {
-                renderer: $.jqplot.CategoryAxisRenderer,
-                ticks: ticks,
-                tickOptions: { showGridLine: false }
+                renderer:$.jqplot.BarRenderer,
+                pointLabels: { show: true, formatString: '%d', formatter: $.jqplot.DefaultTickFormatter},
+                rendererOptions: { barMargin: 2, varyBarColor: true}
             },
-            yaxis:
+            axes:
             {
-                tickOptions: { show: false}
-            }
-        },
-        grid:{ gridLineColor: '#FFF'}
-    });
+                xaxis:
+                {
+                    renderer: $.jqplot.CategoryAxisRenderer,
+                    ticks: ticks,
+                    tickOptions: { showGridLine: false }
+                },
+                yaxis:
+                {
+                    tickOptions: { show: false}
+                }
+            },
+            grid:{ gridLineColor: '#FFF'}
+        });
     }
 
     function createButtons(json){
@@ -63,6 +64,7 @@ $(function() {
         $(".btn-grade").first().addClass("active");
         
         $(".btn-grade").bind('click', function(event){
+            var data, s1;
             $(".btn-grade").removeClass("active");
             $(event.target).addClass("active");
             data = json[event.target.id];

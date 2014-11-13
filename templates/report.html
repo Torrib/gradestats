@@ -4,49 +4,30 @@
 
 {% block content %}
 <div class="row">
-<div class="col-md-8">
-<form  class="form-inline" method="POST">
-    {%  csrf_token %}
-    <fieldset>
+    <div class="col-md-8">
+        <form  class="form" method="POST">
+            {%  csrf_token %}
+            <legend>Rapporter feil</legend>
 
-    <!-- Form Name -->
-    <legend>Rapporter feil</legend>
+            <div class="form-group">
+                <label class="control-label" for="course">Fagkode: </label>
+                <input id="course" name="course_code" type="text" placeholder="eks: IT2901" class="form-control input-default">
+            </div>
 
-    <!-- Text input-->
-    <div class="control-group">
-      <label class="control-label" for="course">Fagkode: </label>
-      <div class="controls">
-        <input id="course" name="course_code" type="text" placeholder="eks: IT2901" class="form-control input-default">
-      </div>
+            <div class="form-group">
+                <label class="control-label" for="term">Semester: </label>
+                <input id="term" name="semester_code" type="text" placeholder="eks: V2010" class="form-control input-default">
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" for="description">Beskrivelse: </label>
+                <textarea rows="7" id="description" class="form-control input-default" name="description"></textarea>
+            </div>
+
+            <div class="form-group">
+                <button id="report" name="report" class="btn btn-primary">Rapporter</button>
+            </div>
+        </form>
     </div>
-
-    <!-- Text input-->
-    <div class="control-group">
-      <label class="control-label" for="term">Semester: </label>
-      <div class="controls">
-        <input id="term" name="semester_code" type="text" placeholder="eks: V2010" class="form-control input-default">
-
-      </div>
-    </div>
-
-    <!-- Textarea -->
-    <div class="control-group">
-      <label class="control-label" for="description">Beskrivelse: </label>
-      <div class="controls">
-        <textarea rows="7" id="description" class="form-control input-default" name="description"></textarea>
-      </div>
-    </div>
-
-    <!-- Button -->
-    <div class="control-group">
-      <label class="control-label" for="report"></label>
-      <div class="controls">
-        <button id="report" name="report" class="btn btn-primary">Rapporter</button>
-      </div>
-    </div>
-
-    </fieldset>
-</form>
-</div>
 </div>
 {% endblock content %}

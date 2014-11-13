@@ -8,11 +8,16 @@ class CourseAdmin(admin.ModelAdmin):
 
 
 class GradeAdmin(admin.ModelAdmin):
+    list_display = ('course', 'semester_code', 'average_grade')
     model = Grade
 
 
 class TagAdmin(admin.ModelAdmin):
+    list_display = ('tag', 'course_list')
     model = Tag
+
+    def course_list(self, obj):
+        return ", ".join([c.code for c in obj.courses.all()])
 
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Grade, GradeAdmin)

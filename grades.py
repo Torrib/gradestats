@@ -170,6 +170,22 @@ def main():
 
     exams = ["VÅR", "SOM", "HØST"]
 
+    #Set default values
+    if len(username) == 0:
+        print "Username required"
+        exit(1)
+    if len(password) == 0:
+        print "Password required"
+        exit(1)
+    if len(from_year) == 0:
+        from_year = 2014
+    if len(to_year) == 0:
+        to_year = 2015
+    if len(from_faculty) == 0:
+        from_faculty = 63
+    if len(to_faculty) == 0:
+        to_faculty = 64
+
     # Iterate over years
     for y in range(int(from_year), int(to_year)):
         print "Getting data for " + repr(y)
