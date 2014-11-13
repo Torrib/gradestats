@@ -10,12 +10,7 @@ from grades.forms import *
 
 
 def index(request):
-    if 'faculty_code' in request.GET and request.GET['faculty_code']:
-        selected = request.GET['faculty_code']
-        courses = Course.objects.filter(faculty_code=int(selected))
-    else:
-        courses = Course.objects.all()
-        selected = 0
+    courses = Course.objects.all()
 
     paginator = Paginator(courses, 20)
     page = request.GET.get('page')
@@ -29,7 +24,7 @@ def index(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses = paginator.page(paginator.num_pages)
 
-    return render(request, 'index.html', {'courses': courses, 'selected': selected, 'faculties': Faculties.get_faculties()})
+    return render(request, 'index.html', {'courses': courses, 'faculties': Faculties.get_faculties()})
 
 
 def course(request, course_code):
@@ -65,8 +60,13 @@ def search(request):
     form = SearchForm(request.GET)
     if form.is_valid():
         query = form.cleaned_data['query']
-        courses = list(Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
-                                             Q(short_name__icontains=query) | Q(code__icontains=query)))
+        faculty_code = form.cleaned_data['faculty_code']
+
+        courses = Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
+                                             Q(short_name__icontains=query) | Q(code__icontains=query))
+        if faculty_code != -1:
+            courses = courses.filter(faculty_code=faculty_code)
+
         tag = Tag.objects.filter(tag=query)
 
         if tag:
@@ -82,7 +82,8 @@ def search(request):
         except EmptyPage:
             courses = paginator.page(paginator.num_pages)
 
-        return render(request, 'index.html', {'courses': courses, 'query': query})
+        return render(request, 'index.html', {'courses': courses, 'query': query, 'selected': str(faculty_code),
+                                              'faculties': Faculties.get_faculties()})
     else:
         return render(request, 'search.html')
 
