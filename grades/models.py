@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.db.models import permalink
 from django.db.models.signals import post_init
@@ -38,6 +39,7 @@ class Grade(models.Model):
     
     average_grade = models.FloatField()
 
+    passed = models.IntegerField(default=0)
     a = models.SmallIntegerField(default=0)
     b = models.SmallIntegerField(default=0)
     c = models.SmallIntegerField(default=0)
@@ -58,6 +60,20 @@ class Tag(models.Model):
 
     def __unicode__(self):
         return self.tag
+
+class Faculties(object):
+    
+    @staticmethod
+    def get_faculties():
+        faculties = dict()
+        faculties['61'] = u'Fakultet for arkitektur og billedkunst'
+        faculties['62'] = u'Det humanistiske fakultet'
+        faculties['63'] = u'Fakultet for informasjonsteknologi, matematikk og elektroteknikk'
+        faculties['64'] = u'Fakultet for ingeniørvitenskap og teknologi'
+        faculties['65'] = u'Det medisinske fakultet'
+        faculties['66'] = u'Fakultet for naturvitenskap og teknologi'
+        faculties['67'] = u'Fakultet for samfunnsvitenskap og teknologiledelse'
+        return faculties
 
 
 def get_average_grade(**kwargs):

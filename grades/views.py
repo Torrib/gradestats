@@ -4,15 +4,14 @@ from django.http import HttpResponse
 from django.core import serializers
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from grades.models import Course, Grade, Tag
+
+from grades.models import Course, Grade, Tag, Faculties
 from grades.forms import *
 
 
 def index(request):
-    #if 'faculty_code' in request.GET and request.GET['faculty_code']:
-    #    courses = Course.objects.filter(faculty_code=int(request.GET['faculty_code']))
-    #else:
     courses = Course.objects.all()
+
     paginator = Paginator(courses, 20)
     page = request.GET.get('page')
 
@@ -25,11 +24,12 @@ def index(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses = paginator.page(paginator.num_pages)
 
-    return render(request, 'index.html', {'courses': courses})
+    return render(request, 'index.html', {'courses': courses, 'faculties': Faculties.get_faculties()})
 
 
 def course(request, course_code):
-    course = get_object_or_404(Course, code=course_code)
+
+    course = get_object_or_404(Course, code=course_code.upper())
     tags = list(Tag.objects.filter(courses=course))
 
     return render(request, 'course.html', {'course': course, 'tags': tags})
@@ -82,7 +82,8 @@ def search(request):
         except EmptyPage:
             courses = paginator.page(paginator.num_pages)
 
-        return render(request, 'index.html', {'courses': courses, 'query': query, 'faculty': faculty_code})
+        return render(request, 'index.html', {'courses': courses, 'query': query, 'selected': str(faculty_code),
+                                              'faculties': Faculties.get_faculties()})
     else:
         return render(request, 'search.html')
 
