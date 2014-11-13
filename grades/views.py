@@ -5,7 +5,7 @@ from django.core import serializers
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from grades.models import Course, Grade, Tag
-from itertools import chain
+from grades.forms import *
 
 
 def index(request):
@@ -30,18 +30,21 @@ def index(request):
 
 def course(request, course_code):
     course = get_object_or_404(Course, code=course_code)
-    tags = list(Tag.objects.filter(course=course))
+    tags = list(Tag.objects.filter(courses=course))
 
     return render(request, 'course.html', {'course': course, 'tags': tags})
 
 
 def add_tag(request, course_code):
     course = get_object_or_404(Course, code=course_code)
-    tag = Tag()
-    tag.course = course
-    tag.tag = request.POST['tag']
+    form = AddTagForm(request.POST)
 
-    tag.save()
+    if form.is_valid():
+        tag = Tag.objects.get_or_create(tag=form.cleaned_data['tag'])
+        if tag[1]:
+            print "Created new tag %s" % tag[0].tag
+        tag[0].save()
+        tag[0].courses.add(course)
 
     return redirect('course', course_code=course_code)
 
@@ -50,38 +53,19 @@ def get_grades(request, course_code):
     course = get_object_or_404(Course, code=course_code)
     grades = course.grade_set.all()
     json = serializers.serialize('json', grades)
-    return HttpResponse(json) 
-
-
-def faculty_filter(request, faculty_code):
-    courses = Course.objects.filter(faculty_code=faculty_code)
-    paginator = Paginator(courses, 20)
-    page = request.GET.get('page')
-
-    try:
-        courses = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        courses = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        courses = paginator.page(paginator.num_pages)
-
-    return render(request, 'index.html', {'courses': courses})
+    return HttpResponse(json)
 
 
 def search(request):
-    if 'query' in request.GET and request.GET['query']:
-        query = request.GET['query']
-
+    form = SearchForm(request.GET)
+    if form.is_valid():
+        query = form.cleaned_data['query']
         courses = list(Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
                                              Q(short_name__icontains=query) | Q(code__icontains=query)))
-
-        tags = Tag.objects.filter(Q(tag__icontains=query))
+        tags = list(Tag.objects.filter(Q(tag__icontains=query)))
 
         for tag in tags:
-            if tag.course not in courses:
-                courses.append(tag.course)
+            courses.extend(c for c in tag.courses.all() if c not in courses)
 
         paginator = Paginator(courses, 20)
         page = request.GET.get('page')
@@ -101,12 +85,10 @@ def search(request):
 
 
 def report(request):
-    if 'course' in request.POST and request.POST['course']:
-        messages = []
-        message = {}
-        message['tags'] = 'success'
-        message['message'] = u"Takk for at du hjelper til med å gjøre denne siden bedre!"
-        messages.append(message)
+    form = ReportErrorForm(request.POST)
+
+    if form.is_valid():
+        messages = [{'tags': 'success', 'text': u"Takk for at du hjelper til med å gjøre denne siden bedre!"}]
         return render(request, 'report.html', {'messages': messages})
     else:
         return render(request, 'report.html')

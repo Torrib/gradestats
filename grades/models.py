@@ -29,7 +29,7 @@ class Course(models.Model):
     
     @permalink
     def get_absolute_url(self):
-        return 'course', None, {'course_code': self.code, }
+        return 'course', None, {'course_code': self.code}
 
 
 class Grade(models.Model):
@@ -53,7 +53,7 @@ class Grade(models.Model):
 
 
 class Tag(models.Model):
-    course = models.ForeignKey(Course)
+    courses = models.ManyToManyField(Course)
     tag = models.CharField("Tag text", max_length=32)
 
     def __unicode__(self):
