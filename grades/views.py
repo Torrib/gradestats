@@ -69,6 +69,8 @@ def search(request):
 
         tag = Tag.objects.filter(tag=query)
 
+        courses = list(courses)
+
         if tag:
             courses.extend(c for c in tag[0].courses.all() if c not in courses)
 
@@ -98,3 +100,5 @@ def report(request):
         return render(request, 'report.html')
 
 
+def about(request):
+    return render(request, 'about.html')
