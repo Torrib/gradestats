@@ -62,10 +62,10 @@ def search(request):
         query = form.cleaned_data['query']
         courses = list(Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
                                              Q(short_name__icontains=query) | Q(code__icontains=query)))
-        tags = list(Tag.objects.filter(Q(tag__icontains=query)))
+        tag = Tag.objects.filter(tag=query)
 
-        for tag in tags:
-            courses.extend(c for c in tag.courses.all() if c not in courses)
+        if tag:
+            courses.extend(c for c in tag[0].courses.all() if c not in courses)
 
         paginator = Paginator(courses, 20)
         page = request.GET.get('page')
@@ -73,10 +73,8 @@ def search(request):
         try:
             courses = paginator.page(page)
         except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
             courses = paginator.page(1)
         except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
             courses = paginator.page(paginator.num_pages)
 
         return render(request, 'index.html', {'courses': courses, 'query': query})
