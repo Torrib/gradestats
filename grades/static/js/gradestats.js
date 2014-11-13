@@ -35,8 +35,8 @@ $(function() {
         seriesDefaults:
         {
             renderer:$.jqplot.BarRenderer,
-            pointLabels: { show: true },
-            rendererOptions: { barMargin: 2, varyBarColor: true},
+            pointLabels: { show: true, formatString: '%d', formatter: $.jqplot.DefaultTickFormatter},
+            rendererOptions: { barMargin: 2, varyBarColor: true}
         },
         axes:
         {
@@ -44,14 +44,14 @@ $(function() {
             {
                 renderer: $.jqplot.CategoryAxisRenderer,
                 ticks: ticks,
-                tickOptions: { showGridLine: false },
+                tickOptions: { showGridLine: false }
             },
             yaxis:
             {
                 tickOptions: { show: false}
             }
         },
-        grid:{ gridLineColor: '#FFF',}
+        grid:{ gridLineColor: '#FFF'}
     });
     }
 
