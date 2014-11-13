@@ -36,7 +36,7 @@ def course(request, course_code):
 
 
 def add_tag(request, course_code):
-    course = get_object_or_404(Course, code=course_code)
+    course = get_object_or_404(Course, code=course_code.upper())
     form = AddTagForm(request.POST)
 
     if form.is_valid():
@@ -46,11 +46,11 @@ def add_tag(request, course_code):
         tag[0].save()
         tag[0].courses.add(course)
 
-    return redirect('course', course_code=course_code)
+    return redirect('course', course_code=course_code.upper())
 
 
 def get_grades(request, course_code):
-    course = get_object_or_404(Course, code=course_code)
+    course = get_object_or_404(Course, code=course_code.upper())
     grades = course.grade_set.all()
     json = serializers.serialize('json', grades)
     return HttpResponse(json)
@@ -62,8 +62,11 @@ def search(request):
         query = form.cleaned_data['query']
         faculty_code = form.cleaned_data['faculty_code']
 
-        courses = Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
-                                             Q(short_name__icontains=query) | Q(code__icontains=query))
+        if len(query) == 0:
+            courses = Course.objects.all()
+        else:
+            courses = Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
+                                            Q(short_name__icontains=query) | Q(code__icontains=query))
         if faculty_code != -1:
             courses = courses.filter(faculty_code=faculty_code)
 
@@ -87,7 +90,7 @@ def search(request):
         return render(request, 'index.html', {'courses': courses, 'query': query, 'selected': str(faculty_code),
                                               'faculties': Faculties.get_faculties()})
     else:
-        return render(request, 'search.html')
+        return render(request, 'index.html', {'faculties': Faculties.get_faculties()})
 
 
 def report(request):

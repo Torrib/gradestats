@@ -100,11 +100,12 @@ def parse_data(data, exam, faculty):
         semester_code = "H"
 
     semester_code += '%s' % (temp[0].strip())
-    print "processing %s" % semester_code
+
 
     # Grade info
     rows_grades = soup.find_all(class_="tableRow")
     # row 5 and down is subjects
+    print "found %d exams from %s" % (len(rows_grades) - 1, semester_code)
     for i in range(0, len(rows_grades) - 1):
         td_grades = rows_grades[i].find_all('td')
         subject_code = td_grades[0].string.split('-')
@@ -147,7 +148,6 @@ def parse_data(data, exam, faculty):
                 grades.average_grade = (grades.a * 5.0 + grades.b * 4 + grades.c * 3 + grades.d * 2 + grades.e) / s
 
             grades.save()
-            print "%s added" % course.english_name
 
 
 def main():
