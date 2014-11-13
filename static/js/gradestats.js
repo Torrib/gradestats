@@ -27,7 +27,7 @@ $(function() {
 	        seriesDefaults:
 	        {
 	            renderer:$.jqplot.BarRenderer,
-	            pointLabels: { show: true },
+	            pointLabels: { show: true, formatString: '%d', formatter: $.jqplot.DefaultTickFormatter},
 	            rendererOptions: { barMargin: 2, varyBarColor: true},
 	        },
 	        axes:
