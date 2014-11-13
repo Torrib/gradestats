@@ -4,19 +4,30 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <form class="form-inline" method="GET">
-                <select class="form-control" name="faculty_code">
-                    <option value="61">Fakultet for arkitektur og billedkunst</option>
-                    <option value="62">Det humanistiske fakultet</option>
-                    <option value="63">Fakultet for informasjonsteknologi, matematikk og elektroteknikk</option>
-                    <option value="64">Fakultet for ingeniørvitenskap og teknologi</option>
-                    <option value="65">Det medisinske fakultet</option>
-                    <option value="66">Fakultet for naturvitenskap og teknologi</option>
-                    <option value="67">Fakultet for samfunnsvitenskap og teknologiledelse</option>
-                </select>
-                <input class="btn btn-primary" type="submit" value="Filtrer" />
+            <div class="form-box">
+            <form class="form-inline" action="/search/" method="get">
+                <div class="control-group form-inline">
+                    {% if query %}
+                    <input id="text" name="query" value ="{{query}}" type="text" class="form-control input-lg"/>
+                    {% else %}
+                    <input id="text" name="query" type="text" class="form-control input-lg"/>
+                    {% endif %}
 
+                    <select class="form-control" value="{{faculty}}" name="faculty_code" >
+                        <option value="-1">Velg fakultet eller søk på alle fakulteter</option>
+                        <option value="61">Fakultet for arkitektur og billedkunst</option>
+                        <option value="62">Det humanistiske fakultet</option>
+                        <option value="63">Fakultet for informasjonsteknologi, matematikk og elektroteknikk</option>
+                        <option value="64">Fakultet for ingeniørvitenskap og teknologi</option>
+                        <option value="65">Det medisinske fakultet</option>
+                        <option value="66">Fakultet for naturvitenskap og teknologi</option>
+                        <option value="67">Fakultet for samfunnsvitenskap og teknologiledelse</option>
+                    </select>
+                    <button type="submit" class="input-lg btn btn-primary">Søk</button>
+                </div>
             </form>
+
+                </div>
             <br />
             <table class="table table-striped table-hover table-bordered">
                 <thead>

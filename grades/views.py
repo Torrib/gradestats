@@ -9,10 +9,10 @@ from grades.forms import *
 
 
 def index(request):
-    if 'faculty_code' in request.GET and request.GET['faculty_code']:
-        courses = Course.objects.filter(faculty_code=int(request.GET['faculty_code']))
-    else:
-        courses = Course.objects.all()
+    #if 'faculty_code' in request.GET and request.GET['faculty_code']:
+    #    courses = Course.objects.filter(faculty_code=int(request.GET['faculty_code']))
+    #else:
+    courses = Course.objects.all()
     paginator = Paginator(courses, 20)
     page = request.GET.get('page')
 
@@ -60,8 +60,13 @@ def search(request):
     form = SearchForm(request.GET)
     if form.is_valid():
         query = form.cleaned_data['query']
-        courses = list(Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
-                                             Q(short_name__icontains=query) | Q(code__icontains=query)))
+        faculty_code = form.cleaned_data['faculty_code']
+
+        courses = Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
+                                             Q(short_name__icontains=query) | Q(code__icontains=query))
+        if faculty_code != -1:
+            courses = courses.filter(faculty_code=faculty_code)
+
         tag = Tag.objects.filter(tag=query)
 
         if tag:
@@ -77,7 +82,7 @@ def search(request):
         except EmptyPage:
             courses = paginator.page(paginator.num_pages)
 
-        return render(request, 'index.html', {'courses': courses, 'query': query})
+        return render(request, 'index.html', {'courses': courses, 'query': query, 'faculty': faculty_code})
     else:
         return render(request, 'search.html')
 
