@@ -38,6 +38,7 @@ class Grade(models.Model):
     
     average_grade = models.FloatField()
 
+    passed = models.IntegerField(default=0)
     a = models.SmallIntegerField(default=0)
     b = models.SmallIntegerField(default=0)
     c = models.SmallIntegerField(default=0)

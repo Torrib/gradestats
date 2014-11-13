@@ -29,7 +29,8 @@ def index(request):
 
 
 def course(request, course_code):
-    course = get_object_or_404(Course, code=course_code)
+
+    course = get_object_or_404(Course, code=course_code.upper())
     tags = list(Tag.objects.filter(courses=course))
 
     return render(request, 'course.html', {'course': course, 'tags': tags})

@@ -137,6 +137,10 @@ def parse_data(data, exam, faculty):
             grades.e = round((int(td_grades[17].string.strip()) / 100.0) * passing)
 
             s = grades.a + grades.b + grades.c + grades.d + grades.e + grades.f
+
+            if s - grades.f == 0:
+                grades.passed = passing
+
             if s == 0:
                 grades.average_grade = 0
             else:
