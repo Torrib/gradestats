@@ -10,6 +10,7 @@ urlpatterns = patterns('grades.views',
     url(r'^course/(?P<course_code>[a-zA-Z\xc5K]{2,5}[\d]{2,4})/grades/$', 'get_grades', name='get_grades'),
     url(r'^search/$', 'search', name='search'),
     url(r'^about/$', 'about', name='about'),
+    url(r'^faq/$', 'faq', name='faq'),
     url(r'^report/$', 'report', name='report'),
     url(r'^admin/', include(admin.site.urls)),
 )
