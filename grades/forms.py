@@ -22,6 +22,7 @@ class ReportErrorForm(forms.Form):
     semester_code = forms.CharField(
         label="Semester",
         max_length=5,
+        required=False,
         validators=[RegexValidator(
                     regex=r'^[VHS]\d{4,4}$',
                     message="Invalid semester code",
