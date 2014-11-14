@@ -4,10 +4,11 @@ from django.http import HttpResponse
 from django.core import serializers
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+import uuid
 from grades.models import Course, Grade, Tag, Faculties
 from grades.forms import *
-
+from django.core.files import File
+import os
 
 def index(request):
     courses = Course.objects.all()
@@ -98,6 +99,29 @@ def report(request):
 
     if form.is_valid():
         messages = [{'tags': 'success', 'text': u"Takk for at du hjelper til med å gjøre denne siden bedre!"}]
+
+        file_path = 'reports/' + str(uuid.uuid4()) + '.xml'
+        while os.path.isfile(file_path):
+            file_path = 'reports/' + str(uuid.uuid4()) + '.xml'
+
+        f = open(file_path, 'w+')
+        xml_file = File(f)
+
+        text = (
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+            "<!DOCTYPE bank SYSTEM \"report.dtd\">",
+            "<report xmlns=\"http://www.w3schools.com\"",
+            "\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
+            "\txsi:schemaLocation=\"report.xsd\">",
+            "\t<course>", "\t\t"+form.cleaned_data['course_code'], "\t</course>",
+            "\t<semester>", "\t\t"+form.cleaned_data['semester_code'], "\t</semester>",
+            "\t<description>", "\t\t"+form.cleaned_data['description'], "\t</description>",
+            "</report>"
+        )
+
+        xml_file.write("\n".join(text))
+        xml_file.close()
+
         return render(request, 'report.html', {'messages': messages})
     else:
         return render(request, 'report.html')
