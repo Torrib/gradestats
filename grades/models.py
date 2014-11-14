@@ -66,13 +66,13 @@ class Faculties(object):
     @staticmethod
     def get_faculties():
         faculties = dict()
-        faculties['61'] = u'Fakultet for arkitektur og billedkunst'
-        faculties['62'] = u'Det humanistiske fakultet'
-        faculties['63'] = u'Fakultet for informasjonsteknologi, matematikk og elektroteknikk'
-        faculties['64'] = u'Fakultet for ingeniørvitenskap og teknologi'
-        faculties['65'] = u'Det medisinske fakultet'
-        faculties['66'] = u'Fakultet for naturvitenskap og teknologi'
-        faculties['67'] = u'Fakultet for samfunnsvitenskap og teknologiledelse'
+        faculties['61'] = u'(AB) Fakultet for arkitektur og billedkunst'
+        faculties['62'] = u'(HF) Det humanistiske fakultet'
+        faculties['63'] = u'(IME) Fakultet for informasjonsteknologi, matematikk og elektroteknikk'
+        faculties['64'] = u'(IVT) Fakultet for ingeniørvitenskap og teknologi'
+        faculties['65'] = u'(DMF) Det medisinske fakultet'
+        faculties['66'] = u'(NT) Fakultet for naturvitenskap og teknologi'
+        faculties['67'] = u'(SVT) Fakultet for samfunnsvitenskap og teknologiledelse'
         return faculties
 
 
