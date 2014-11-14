@@ -40,7 +40,7 @@ def add_tag(request, course_code):
     form = AddTagForm(request.POST)
 
     if form.is_valid():
-        tag = Tag.objects.get_or_create(tag=form.cleaned_data['tag'])
+        tag = Tag.objects.get_or_create(tag=form.cleaned_data['tag'].lower())
         if tag[1]:
             print "Created new tag %s" % tag[0].tag
         tag[0].save()
@@ -70,7 +70,7 @@ def search(request):
         if faculty_code != -1:
             courses = courses.filter(faculty_code=faculty_code)
 
-        tag = Tag.objects.filter(tag=query)
+        tag = Tag.objects.filter(tag=query.lower())
 
         courses = list(courses)
 
