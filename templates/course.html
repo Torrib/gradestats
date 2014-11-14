@@ -7,9 +7,21 @@
     <div class="col-md-8">
         <h1>{{ course.code }} - {{ course.norwegian_name }}</h1>
         <h2>Faglig Innhold</h2>
-        <p>{{ course.content }}</p>
+        <p>
+            {% if course.content %}
+                {{ course.content }}
+            {% else %}
+                Ingen info.
+            {% endif %}
+        </p>
         <h2>Læringsmål</h2>
-        <p>{{ course.learning_goal }}</p>
+        <p>
+            {% if course.learning_goal %}
+                {{ course.learning_goal }}
+            {% else %}
+                Ingen info.
+            {% endif %}
+        </p>
     </div>
     <div class="col-md-4">
         <div class="well">
