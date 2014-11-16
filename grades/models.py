@@ -2,6 +2,7 @@
 from django.db import models
 from django.db.models import permalink
 from django.db.models.signals import post_init
+from collections import OrderedDict
 
 
 class Course(models.Model):
@@ -61,8 +62,21 @@ class Tag(models.Model):
     def __unicode__(self):
         return self.tag
 
+
+class NavbarItems(object):
+    @staticmethod
+    def get_items():
+        items = OrderedDict([
+            ('index', 'Fag'),
+            ('about', 'Om siden'),
+            ('faq', 'FAQ'),
+            ('report', 'Rapporter feil'),
+            ('api', 'API')
+        ])
+        return items
+
+
 class Faculties(object):
-    
     @staticmethod
     def get_faculties():
         faculties = dict()
