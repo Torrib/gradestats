@@ -1,14 +1,24 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
-from django.core import serializers
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-import uuid
-from grades.models import Course, Grade, Tag, Faculties
+from grades.models import *
 from grades.forms import *
 from django.core.files import File
 import os
+import uuid
+
+
+def navbar_render(request, args, dictionary={}):
+
+    kwargs = {
+        'navbar': NavbarItems.get_items()
+    }
+
+    kwargs.update(dictionary)
+
+    return render(request, args, kwargs)
+
 
 def index(request):
     courses = Course.objects.all()
@@ -25,15 +35,14 @@ def index(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses = paginator.page(paginator.num_pages)
 
-    return render(request, 'index.html', {'courses': courses, 'faculties': Faculties.get_faculties()})
+    return navbar_render(request, 'index.html', {'courses': courses, 'faculties': Faculties.get_faculties()})
 
 
 def course(request, course_code):
-
     course = get_object_or_404(Course, code=course_code.upper())
     tags = list(Tag.objects.filter(courses=course))
 
-    return render(request, 'course.html', {'course': course, 'tags': tags})
+    return navbar_render(request, 'course.html', {'course': course, 'tags': tags})
 
 
 def add_tag(request, course_code):
@@ -51,10 +60,9 @@ def add_tag(request, course_code):
 
 
 def get_grades(request, course_code):
-    course = get_object_or_404(Course, code=course_code.upper())
-    grades = course.grade_set.all()
-    json = serializers.serialize('json', grades)
-    return HttpResponse(json)
+    url = "/api/courses/%s/grades" % course_code
+
+    return redirect(url)
 
 
 def search(request):
@@ -88,10 +96,10 @@ def search(request):
         except EmptyPage:
             courses = paginator.page(paginator.num_pages)
 
-        return render(request, 'index.html', {'courses': courses, 'query': query, 'selected': str(faculty_code),
+        return navbar_render(request, 'index.html', {'courses': courses, 'query': query, 'selected': str(faculty_code),
                                               'faculties': Faculties.get_faculties()})
     else:
-        return render(request, 'index.html', {'faculties': Faculties.get_faculties()})
+        return navbar_render(request, 'index.html', {'faculties': Faculties.get_faculties()})
 
 
 def report(request):
@@ -108,27 +116,28 @@ def report(request):
         xml_file = File(f)
 
         text = (
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-            "<!DOCTYPE bank SYSTEM \"report.dtd\">",
-            "<report xmlns=\"http://www.w3schools.com\"",
-            "\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
-            "\txsi:schemaLocation=\"report.xsd\">",
-            "\t<course>", "\t\t"+form.cleaned_data['course_code'], "\t</course>",
-            "\t<semester>", "\t\t"+form.cleaned_data['semester_code'], "\t</semester>",
-            "\t<description>", "\t\t"+form.cleaned_data['description'], "\t</description>",
-            "</report>"
+            u"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+            u"<!DOCTYPE bank SYSTEM \"report.dtd\">",
+            u"<report xmlns=\"http://www.w3schools.com\"",
+            u"\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
+            u"\txsi:schemaLocation=\"report.xsd\">",
+            u"\t<course>", u"\t\t" + form.cleaned_data['course_code'], u"\t</course>",
+            u"\t<semester>", u"\t\t" + form.cleaned_data['semester_code'], u"\t</semester>",
+            u"\t<description>", u"\t\t" + form.cleaned_data['description'], u"\t</description>",
+            u"</report>"
         )
 
-        xml_file.write("\n".join(text))
+        xml_file.write(u'\n'.join(text).encode('utf8'))
         xml_file.close()
 
-        return render(request, 'report.html', {'messages': messages})
+        return navbar_render(request, 'report.html', {'messages': messages})
     else:
-        return render(request, 'report.html')
+        return navbar_render(request, 'report.html')
 
 
 def about(request):
-    return render(request, 'about.html')
+    return navbar_render(request, 'about.html')
+
 
 def faq(request):
-    return render(request, 'faq.xml')
+    return navbar_render(request, 'faq.xml')

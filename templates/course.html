@@ -24,13 +24,13 @@
         </p>
     </div>
     <div class="col-md-4">
-        <div class="well">
+        <div class="well text-center">
+            <div id="grades-graph"></div>
             <ul class="nav nav-list">
-                <li class="text-center">
-                    <div id="grades-graph"></div>
-                    <div id="grade-buttons" class="btn-group"></div>
-                </li>
+                <li>Snittkarakter: <label id="average-grade" ></label></li>
+                <li>Totalt snitt: <label id="total-average-grade" >{{ course.average|floatformat:-2 }}</label></li>
             </ul>
+            <div id="grade-buttons" class="btn-group"></div>
         </div>
         <div class="well">
             <ul class="nav nav-list">

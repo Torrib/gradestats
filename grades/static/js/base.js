@@ -1,8 +1,8 @@
 window.addEventListener('load', function() {
     var url = window.location.href;
-    console.log(url);
+
     var navbar = document.getElementById('navbar');
-    if(url.indexOf("index") > -1)
+    if(url.indexOf("index") > -1 || url.indexOf("course") > -1)
         navbar.children[0].className += ' active';
     else if(url.indexOf("about") > -1)
         navbar.children[1].className += ' active';

@@ -17,15 +17,16 @@ $(function() {
     /* END AJAX SETUP */
 
     function createGraph(data){
+
         $.jqplot.config.enablePlugins = true;
         var s1, ticks, colors;
-        if(data.fields.passed === 0){
-            s1 = [data.fields.a, data.fields.b, data.fields.c, data.fields.d, data.fields.e, data.fields.f]
+        if(data.passed === 0){
+            s1 = [data.a, data.b, data.c, data.d, data.e, data.f]
             ticks = ['A', 'B', 'C', 'D', 'E', 'F'];
             colors = [ "#00CC00", "#00CC33", "#CCFF33", "#FFFF00", "#FF6600", "#CC0000"];
         }
         else{
-            s1 = [data.fields.passed, data.fields.f]
+            s1 = [data.passed, data.f]
             ticks = ['Bestått', 'Ikke bestått']
             colors = [ "#00CC00", "#CC0000"];
         }
@@ -57,9 +58,12 @@ $(function() {
     }
 
     function createButtons(json){
-        for(i = 0; i < json.length; i++){
-            $("#grade-buttons").append("<button type=\"button\" id=" + i + " class=\"btn-grade btn btn-default\">" + json[i].fields.semester_code + "</button>");
+
+        for(var i = 0; i < json.length; i++){
+            $("#grade-buttons").append("<button type=\"button\" id=\"" + i + "\" class=\"btn-grade btn btn-default\">" + json[i].semester_code + "</button>");
         }
+
+        $("#average-grade").text(json[0].average_grade.toFixed(2));
 
         $(".btn-grade").first().addClass("active");
         
@@ -68,11 +72,14 @@ $(function() {
             $(".btn-grade").removeClass("active");
             $(event.target).addClass("active");
             data = json[event.target.id];
-            if(data.fields.passed === 0){
-                s1 = [data.fields.a, data.fields.b, data.fields.c, data.fields.d, data.fields.e, data.fields.f];
+
+            $("#average-grade").text(data.average_grade.toFixed(2));
+
+            if(data.passed === 0){
+                s1 = [data.a, data.b, data.c, data.d, data.e, data.f];
             }
             else{
-                s1 = [data.fields.passed, data.fields.f];
+                s1 = [data.passed, data.f];
             }
             graph.replot({data:[s1]});
         });
@@ -84,8 +91,8 @@ $(function() {
     {
         $.getJSON("grades/", function(json)
         {
-            createGraph(json[0]);
-            createButtons(json);
+            createGraph(json.grades[0]);
+            createButtons(json.grades);
         });
     });
 

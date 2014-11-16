@@ -26,10 +26,11 @@
             </div>
             <div class="collapse navbar-collapse" id="navigationlist">
                 <ul id="navbar" class="nav navbar-nav">
-                    <li class="navbar-item"><a href="/index/">Fag</a></li>
-                    <li class="navbar-item"><a href="/about/">Om siden</a></li>
-                    <li class="navbar-item"><a href="/faq/">FAQ</a></li>
-                    <li class="navbar-item"><a href="/report/">Rapporter feil</a></li>
+                {% if navbar %}
+                {% for key, value in navbar.items %}
+                    <li class="navbar-item"><a href="/{{ key }}/">{{ value }}</a></li>
+                {% endfor %}
+                {% endif %}
                 </ul>
             </div>
         </div>
