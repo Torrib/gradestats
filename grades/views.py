@@ -14,7 +14,6 @@ def navbar_render(request, args, dictionary={}):
     kwargs = {
         'navbar': NavbarItems.get_items()
     }
-
     kwargs.update(dictionary)
 
     return render(request, args, kwargs)
@@ -51,10 +50,9 @@ def add_tag(request, course_code):
 
     if form.is_valid():
         tag = Tag.objects.get_or_create(tag=form.cleaned_data['tag'].lower())
-        if tag[1]:
-            print "Created new tag %s" % tag[0].tag
-        tag[0].save()
-        tag[0].courses.add(course)
+        tag = tag[0]
+        tag.save()
+        tag.courses.add(course)
 
     return redirect('course', course_code=course_code.upper())
 
@@ -67,39 +65,36 @@ def get_grades(request, course_code):
 
 def search(request):
     form = SearchForm(request.GET)
-    if form.is_valid():
-        query = form.cleaned_data['query']
-        faculty_code = form.cleaned_data['faculty_code']
+    query = form.data['query']
+    faculty_code = form.data['faculty_code']
 
-        if len(query) == 0:
-            courses = Course.objects.all()
-        else:
-            courses = Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
-                                            Q(short_name__icontains=query) | Q(code__icontains=query))
-        if faculty_code != -1:
-            courses = courses.filter(faculty_code=faculty_code)
-
-        tag = Tag.objects.filter(tag=query.lower())
-
-        courses = list(courses)
-
-        if tag:
-            courses.extend(c for c in tag[0].courses.all() if c not in courses)
-
-        paginator = Paginator(courses, 20)
-        page = request.GET.get('page')
-
-        try:
-            courses = paginator.page(page)
-        except PageNotAnInteger:
-            courses = paginator.page(1)
-        except EmptyPage:
-            courses = paginator.page(paginator.num_pages)
-
-        return navbar_render(request, 'index.html', {'courses': courses, 'query': query, 'selected': str(faculty_code),
-                                              'faculties': Faculties.get_faculties()})
+    if len(query) == 0:
+        courses = Course.objects.all()
     else:
-        return navbar_render(request, 'index.html', {'faculties': Faculties.get_faculties()})
+        courses = Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
+                                        Q(short_name__icontains=query) | Q(code__icontains=query))
+    if faculty_code != -1:
+        courses = courses.filter(faculty_code=faculty_code)
+
+    tag = Tag.objects.filter(tag=query.lower())
+
+    courses = list(courses)
+
+    if tag:
+        courses.extend(c for c in tag[0].courses.all() if c not in courses)
+
+    paginator = Paginator(courses, 20)
+    page = request.GET.get('page')
+
+    try:
+        courses = paginator.page(page)
+    except PageNotAnInteger:
+        courses = paginator.page(1)
+    except EmptyPage:
+        courses = paginator.page(paginator.num_pages)
+
+    return navbar_render(request, 'index.html', {'courses': courses, 'query': query, 'selected': str(faculty_code),
+                                  'faculties': Faculties.get_faculties()})
 
 
 def report(request):
