@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-{% extends "base.html" %}
-
-{% block title %} {{ block.super }} | Søk {% endblock %}
-
-{% block content %}
 <faq>
     <h1>FAQ</h1>
     <qa>
@@ -16,4 +11,3 @@
         <answer>Ja, i aller høyeste grad.</answer>
     </qa>
 </faq>
-{% endblock content %}

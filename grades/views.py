@@ -135,4 +135,4 @@ def about(request):
 
 
 def faq(request):
-    return navbar_render(request, 'faq.xml')
+    return navbar_render(request, 'faq.html')
