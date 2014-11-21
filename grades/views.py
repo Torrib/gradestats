@@ -73,7 +73,7 @@ def search(request):
     else:
         courses = Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
                                         Q(short_name__icontains=query) | Q(code__icontains=query))
-    if faculty_code != -1:
+    if faculty_code != "-1":
         courses = courses.filter(faculty_code=faculty_code)
 
     tag = Tag.objects.filter(tag=query.lower())
