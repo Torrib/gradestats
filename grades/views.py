@@ -136,3 +136,6 @@ def about(request):
 
 def faq(request):
     return navbar_render(request, 'faq.html')
+
+def api(request):
+    return navbar_render(request, "api_index.html")

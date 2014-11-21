@@ -10,6 +10,8 @@ window.addEventListener('load', function() {
         navbar.children[2].className += ' active';
      else if(url.indexOf("report") > -1)
         navbar.children[3].className += ' active';
+     else if(url.indexOf("api") > -1)
+        navbar.children[4].className += ' active';
 });
 
 setTimeout(function() {
