@@ -59,11 +59,18 @@ $(function() {
 
     function createButtons(json){
 
+        if(window.innerWidth < 360){
+            var breakPoint = 3;
+        }
+        else{
+            var breakPoint = 4;
+        }
+
         buttonGroup = document.createElement('div');
         $(buttonGroup).addClass("btn-group");
 
         for(var i = 0; i < json.length; i++){
-            if(i % 4 == 0 && i != 0){
+            if(i % breakPoint == 0 && i != 0){
                 $("#grade-buttons").append(buttonGroup);
                 buttonGroup = document.createElement('div');
                 $(buttonGroup).addClass("btn-group");
