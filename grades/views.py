@@ -66,7 +66,10 @@ def get_grades(request, course_code):
 def search(request):
     form = SearchForm(request.GET)
     query = form.data['query']
-    faculty_code = form.data['faculty_code']
+    if 'faculty_code' in form.data:
+        faculty_code = form.data['faculty_code']
+    else:
+        faculty_code = -1
 
     if len(query) == 0:
         courses = Course.objects.all()
