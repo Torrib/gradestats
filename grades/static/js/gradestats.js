@@ -59,9 +59,19 @@ $(function() {
 
     function createButtons(json){
 
+        buttonGroup = document.createElement('div');
+        $(buttonGroup).addClass("btn-group");
+
         for(var i = 0; i < json.length; i++){
-            $("#grade-buttons").append("<button type=\"button\" id=\"" + i + "\" class=\"btn-grade btn btn-default\">" + json[i].semester_code + "</button>");
+            if(i % 4 == 0 && i != 0){
+                $("#grade-buttons").append(buttonGroup);
+                buttonGroup = document.createElement('div');
+                $(buttonGroup).addClass("btn-group");
+            }
+            $(buttonGroup).append("<button type=\"button\" id=\"" + i + "\" class=\"btn-grade btn btn-default\">" + json[i].semester_code + "</button>");
         }
+        
+        $("#grade-buttons").append(buttonGroup);
 
         $("#average-grade").text(json[0].average_grade.toFixed(2));
 

@@ -30,7 +30,9 @@
                 <li>Snittkarakter: <label id="average-grade" ></label></li>
                 <li>Totalt snitt: <label id="total-average-grade" >{{ course.average|floatformat:-2 }}</label></li>
             </ul>
-            <div id="grade-buttons" class="btn-group"></div>
+            <div id="grade-group">
+                <div id="grade-buttons" class="btn-toolbar"></div>
+            </div>
         </div>
         <div class="well">
             <ul class="nav nav-list">
