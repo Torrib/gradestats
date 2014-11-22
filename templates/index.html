@@ -45,7 +45,13 @@
                     <tr onclick="document.location='{{ course.get_absolute_url }}';">
                         <td>{{ course.code }}</td>
                         <td>{{ course.norwegian_name }}</td>
-                        <td>{{ course.average|floatformat:-2 }}</td>
+                        <td>
+                        {% if course.average > 0 %}
+                            {{ course.average|floatformat:-2 }}
+                        {% else%}
+                            -
+                        {% endif %}
+                        </td>
                     </tr>
 
                 {% endif %}
