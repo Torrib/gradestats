@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from grades.models import *
 
+
 class GradeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Grade

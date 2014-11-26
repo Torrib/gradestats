@@ -1,23 +1,7 @@
 $(function() {
     var graph;
 
-    /* AJAX SETUP FOR CSRF */
-    $.ajaxSetup({
-        crossDomain: false, // obviates need for sameOrigin test
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type)) {
-                xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
-            }
-        }
-    });
-    function csrfSafeMethod(method) {
-        // these HTTP methods do not require CSRF protection
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-    /* END AJAX SETUP */
-
     function createGraph(data){
-
         $.jqplot.config.enablePlugins = true;
         var s1, ticks, colors;
         if(data.passed === 0){
@@ -58,8 +42,7 @@ $(function() {
     }
 
     function createButtons(json){
-
-        buttonGroup = document.createElement('div');
+        var buttonGroup = document.createElement('div');
         $(buttonGroup).addClass("btn-group");
 
         for(var i = 0; i < json.length; i++){
@@ -94,15 +77,23 @@ $(function() {
             graph.replot({data:[s1]});
         });
     }
-    
-    
 
     $(document).ready(function()
     {
-        $.getJSON("grades/", function(json)
-        {
-            createGraph(json.grades[0]);
-            createButtons(json.grades);
+        $.ajax({
+            type: 'GET',
+            url: "grades/",
+            async: false,
+            jsonpCallback: 'parse',
+            contentType: "application/json",
+            dataType: 'jsonp',
+            success: function(json) {
+                createButtons(json)
+                createGraph(json[0])
+            },
+            error: function(e) {
+                console.log(e.message);
+            }
         });
     });
 

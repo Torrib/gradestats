@@ -56,6 +56,12 @@ ROOT_URLCONF = 'gradestats.urls'
 
 WSGI_APPLICATION = 'gradestats.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.JSONPRenderer',
+    )
+}
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
