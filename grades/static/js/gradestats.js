@@ -47,7 +47,7 @@ $(function() {
     }
 
     function createButtons(json){
-        if(window.innerWidth < 360){
+        if($("#grade-buttons").innerWidth() < 320){
             var breakPoint = 3;
         }
         else{
