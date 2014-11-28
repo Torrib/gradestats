@@ -62,15 +62,15 @@
             {% if courses.paginator.num_pages > 1 %}
                 <div class="container-fluid text-center">
                     {% if courses.has_previous %}
-                        <a href="?page={{ courses.previous_page_number }}&query={{ query }}&faculty_code={{ selected }}"><<</a>
+                        <a href="?page={{ courses.previous_page_number }}&amp;query={{ query }}&amp;faculty_code={{ selected }}">&lt;&lt;</a>
                     {% else %}
-                        <<
+                        &lt;&lt;
                     {% endif %}
 
                     {{ courses.number }} av {{ courses.paginator.num_pages }}
 
                     {% if courses.has_next %}
-                        <a href="?page={{ courses.next_page_number }}&query={{ query }}&faculty_code={{ selected }}">>></a>
+                        <a href="?page={{ courses.next_page_number }}&amp;query={{ query }}&amp;faculty_code={{ selected }}">>></a>
                      {% else %}
                         >>
                     {% endif %}

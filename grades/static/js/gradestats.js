@@ -8,11 +8,15 @@ $(function() {
             s1 = [data.a, data.b, data.c, data.d, data.e, data.f]
             ticks = ['A', 'B', 'C', 'D', 'E', 'F'];
             colors = [ "#00CC00", "#00CC33", "#CCFF33", "#FFFF00", "#FF6600", "#CC0000"];
+            barMargin = 2;
+            max = null;
         }
         else{
             s1 = [data.passed, data.f]
             ticks = ['Bestått', 'Ikke bestått']
             colors = [ "#00CC00", "#CC0000"];
+            barMargin = 10;
+            max = ((data.passed == data.f) ? data.passed +1 : null);
         }
         graph = $.jqplot('grades-graph', [s1],
         {
@@ -22,7 +26,7 @@ $(function() {
             {
                 renderer:$.jqplot.BarRenderer,
                 pointLabels: { show: true, formatString: '%d', formatter: $.jqplot.DefaultTickFormatter},
-                rendererOptions: { barMargin: 2, varyBarColor: true}
+                rendererOptions: { barMargin: barMargin, varyBarColor: true}
             },
             axes:
             {
@@ -34,6 +38,7 @@ $(function() {
                 },
                 yaxis:
                 {
+                    max: max,
                     tickOptions: { show: false}
                 }
             },
@@ -42,11 +47,19 @@ $(function() {
     }
 
     function createButtons(json){
+        if(window.innerWidth < 360){
+            var breakPoint = 3;
+        }
+        else{
+            var breakPoint = 4;
+        }
+
         var buttonGroup = document.createElement('div');
+
         $(buttonGroup).addClass("btn-group");
 
         for(var i = 0; i < json.length; i++){
-            if(i % 4 == 0 && i != 0){
+            if(i % breakPoint == 0 && i != 0){
                 $("#grade-buttons").append(buttonGroup);
                 buttonGroup = document.createElement('div');
                 $(buttonGroup).addClass("btn-group");
@@ -55,10 +68,8 @@ $(function() {
         }
         
         $("#grade-buttons").append(buttonGroup);
-
         $("#average-grade").text(json[0].average_grade.toFixed(2));
-
-        $(".btn-grade").first().addClass("active");
+        $(".btn-grade").last().addClass("active");
         
         $(".btn-grade").bind('click', function(event){
             var data, s1;
@@ -68,13 +79,8 @@ $(function() {
 
             $("#average-grade").text(data.average_grade.toFixed(2));
 
-            if(data.passed === 0){
-                s1 = [data.a, data.b, data.c, data.d, data.e, data.f];
-            }
-            else{
-                s1 = [data.passed, data.f];
-            }
-            graph.replot({data:[s1]});
+            graph.destroy();
+            createGraph(data);
         });
     }
 
@@ -89,7 +95,7 @@ $(function() {
             dataType: 'jsonp',
             success: function(json) {
                 createButtons(json)
-                createGraph(json[0])
+                createGraph(json[json.length - 1])
             },
             error: function(e) {
                 console.log(e.message);
