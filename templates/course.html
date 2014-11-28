@@ -2,6 +2,12 @@
 
 {% block title %} {{ block.super }} | {{ course.code }}{% endblock %}
 
+{% block css %}
+    {{ block.super }}
+    <link href="{{ STATIC_URL }}css/jquery.jqplot.min.css" rel="stylesheet">
+{% endblock %}
+
+
 {% block content %}
 <div class="row">
     <div class="col-md-8">
@@ -93,6 +99,5 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/jqplot.categoryAxisRenderer.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jqplot.pointLabels.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/gradestats.js"></script>
-    <link href="{{ STATIC_URL }}css/jquery.jqplot.min.css" rel="stylesheet">
 </div>
 {% endblock content %}
