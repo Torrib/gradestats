@@ -25,6 +25,17 @@ class Course(models.Model):
     learning_goal = models.TextField()
 
     average = 0
+    
+    def course_level(self):
+        if self.study_level < 300:
+            return 'Grunnleggende'
+        elif self.study_level < 500:
+            return 'Videregående'
+        elif self.study_level < 900:
+            return 'Avansert'
+        else:
+            return 'Doktorgrad'
+
 
     def __unicode__(self):
         return self.code

@@ -41,7 +41,7 @@ def course(request, course_code):
     course = get_object_or_404(Course, code=course_code.upper())
     tags = list(Tag.objects.filter(courses=course))
 
-    return navbar_render(request, 'course.html', {'course': course, 'tags': tags})
+    return navbar_render(request, 'course.html', {'course': course, 'tags': tags, 'course_level': course.course_level})
 
 
 def add_tag(request, course_code):

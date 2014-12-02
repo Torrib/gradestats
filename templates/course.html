@@ -48,6 +48,9 @@
                     <label>Studiepoeng: {{ course.credit|floatformat:-1 }}</label>
                 </li>
                 <li>
+                    <label>Nivå: {{ course_level }}</level>
+                </li>
+                <li>
                     <label>Vår: {% if course.taught_in_spring %}
                         <span class="glyphicon glyphicon-ok"></span>
                     {% else %}
