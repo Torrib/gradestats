@@ -55,5 +55,13 @@ class CourseTypeaheadViewSet(viewsets.ReadOnlyModelViewSet):
             query = ""
 
         self.queryset = self.queryset.filter(Q(code__istartswith=query) | Q(norwegian_name__istartswith=query) | Q(english_name__istartswith=query))
+
+        tag = Tag.objects.filter(tag=query.lower())
+
+        self.queryset = list(self.queryset)
+
+        if tag:
+            self.queryset.extend(c for c in tag[0].courses.all() if c not in self.queryset)
+
         serializer = CourseTypeaheadSerializer(self.queryset, many=True)
         return Response(serializer.data)

@@ -112,7 +112,9 @@
             source: course.ttAdapter()
 
         }
-    );
+    ).on('typeahead:selected', function(event, suggestion, dataset) {
+        document.location = "/course/" + suggestion.code;
+    });
 });
 </script>
 {% endblock content %}
