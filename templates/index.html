@@ -101,7 +101,12 @@
             templates: {
                 empty: '<p>Ingen treff</p>',
                 suggestion: function(value) {
-                    return "<p>" + value.code + " - " + value.norwegian_name + "</p>";
+                    var q = document.getElementById("query").value;
+
+                    if(value.norwegian_name.toLowerCase().indexOf(q) != -1)
+                        return "<p>" + value.norwegian_name + "</p>";
+                    else
+                        return "<p>" + value.code + " - " + value.norwegian_name + "</p>";
                 }
             },
             source: course.ttAdapter()
