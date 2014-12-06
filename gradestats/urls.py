@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from grades_api.views import CourseViewSet, GradeViewSet
+from grades_api.views import *
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.routers import SimpleRouter
 
@@ -24,5 +24,7 @@ router = SimpleRouter(trailing_slash=False)
 router.register('api/courses', CourseViewSet)  # Create routes for Courses
 regex = router.get_urls()[1].regex.pattern[1:-1]
 router.register(regex + '/grades', GradeViewSet)  # Create routes for grades using regex from course route as base
+router.register('api/index', CourseIndexViewSet)
+router.register('api/typeahead/course', CourseTypeaheadViewSet)
 
 urlpatterns += format_suffix_patterns(router.urls, allowed=['json', 'jsonp'])

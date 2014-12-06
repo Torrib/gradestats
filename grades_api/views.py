@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from grades_api.serializers import *
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+from django.db.models import Q
 
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
@@ -31,4 +32,28 @@ class GradeViewSet(viewsets.ReadOnlyModelViewSet):
         course = get_object_or_404(Course, code=kwargs['code'].upper())
         grades = course.grade_set.all()
         serializer = GradeSerializer(grades, many=True)
+        return Response(serializer.data)
+
+
+class CourseIndexViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseIndexSerializer
+
+
+class CourseTypeaheadViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseTypeaheadSerializer
+    lookup_field = 'code'
+
+    def list(self, request, *args, **kwargs):
+        if 'query' not in request.GET:
+            return Response("")
+
+        if 'query' in request.GET:
+            query = request.GET.get('query')
+        else:
+            query = ""
+
+        self.queryset = self.queryset.filter(Q(code__istartswith=query) | Q(norwegian_name__istartswith=query) | Q(english_name__istartswith=query))
+        serializer = CourseTypeaheadSerializer(self.queryset, many=True)
         return Response(serializer.data)

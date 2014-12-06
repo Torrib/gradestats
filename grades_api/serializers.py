@@ -14,3 +14,15 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = ('norwegian_name', 'short_name', 'code', 'faculty_code', 'english_name', 'credit', 'study_level',
                   'taught_in_spring', 'taught_in_autumn', 'taught_from', 'taught_in_english', 'last_year_taught',
                   'content', 'learning_form', 'learning_goal')
+
+
+class CourseIndexSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ('code', 'norwegian_name', 'faculty_code')
+
+
+class CourseTypeaheadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ('code', 'norwegian_name', 'english_name')
