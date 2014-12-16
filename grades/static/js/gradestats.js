@@ -1,8 +1,8 @@
 $(function() {
     var graph;
+    var selectedBarButton;
 
     function createGraph(data){
-        $.jqplot.config.enablePlugins = true;
         var s1, ticks, colors;
         if(data.passed === 0){
             s1 = [data.a, data.b, data.c, data.d, data.e, data.f]
@@ -70,17 +70,134 @@ $(function() {
         $("#grade-buttons").append(buttonGroup);
         $("#average-grade").text(json[0].average_grade.toFixed(2));
         $(".btn-grade").last().addClass("active");
+        selectedBarButton = json.length -1;
         
         $(".btn-grade").bind('click', function(event){
             var data, s1;
             $(".btn-grade").removeClass("active");
             $(event.target).addClass("active");
             data = json[event.target.id];
+            selectedBarButton = event.target.id;
 
             $("#average-grade").text(data.average_grade.toFixed(2));
 
             graph.destroy();
             createGraph(data);
+        });
+
+    }
+
+    function createLineGraph(ticks, values, format){
+        graph = $.jqplot('grades-graph', [values],
+        {
+            seriesDefaults:
+            {
+                pointLabels: { show: true, formatString: format, formatter: $.jqplot.DefaultTickFormatter}
+            },
+            axes:
+            {
+                xaxis:
+                {
+                    renderer: $.jqplot.CategoryAxisRenderer,
+                    ticks: ticks,
+                    tickOptions: { showGridLine: false }
+                },
+                yaxis:
+                {
+                    tickOptions: { show: false}
+                }
+            },
+            grid:{ gridLineColor: '#FFF'}
+        });
+    }
+
+    function getLineGraphTicks(json){
+        var ticks = [];
+
+        for(var i = 0; i < json.length; i++){
+
+            //reduce the semester code length if the ammount of semesters is to big
+            if(json.length > 8){
+                var string = json[i].semester_code;
+                ticks.push(string.substring(0, 1) + string.substring(3, 5));
+            }
+            else{
+                ticks.push(json[i].semester_code);
+            }
+        }
+
+        return ticks;
+    }
+
+    function getAverageValues(json){
+        var values = [];
+
+        for(var i = 0; i < json.length; i++){
+            values.push(json[i].average_grade);
+        }
+
+        return values;
+    }
+
+    function getFailrates(json){
+        var values = [];
+
+        for(var i = 0; i < json.length; i++){
+            if(json[i].passed === 0){
+                var total = json[i].a + json[i].b + json[i].c + json[i].d + json[i].e + json[i].f;
+            }
+            else{
+                var total = json[i].passed + json[i].f;
+            }
+
+            var failure = (json[i].f / total) * 100;
+            values.push(failure);
+        }
+        return values;
+    }
+
+
+
+    function setupGraphSelector(json){
+
+        $("#bar-graph-button").addClass("active");
+
+        if(json[0].passed != 0){
+            $("#average-graph-button").addClass("hide");
+        }
+        
+        $("#graph-selector>div").bind("click", function(){
+            $("#graph-selector>div>button.active").removeClass("active");
+        });
+
+        $("#bar-graph-button").bind("click", function(){
+            $("#bar-graph-button").addClass("active");
+            $("#bar-chart-data").removeClass("hide");
+            graph.destroy();
+            createGraph(json[selectedBarButton]);
+        });
+
+
+        $("#average-graph-button").bind("click", function(){
+            $("#average-graph-button").addClass("active");
+            $("#bar-chart-data").addClass("hide");
+
+            var ticks = getLineGraphTicks(json);
+            var values = getAverageValues(json);
+            
+            graph.destroy();
+            createLineGraph(ticks, values, '%.2f');
+        });
+        
+        $("#failed-graph-button").bind("click", function(){
+            $("#failed-graph-button").addClass("active");
+            $("#bar-chart-data").addClass("hide");
+
+            var ticks = getLineGraphTicks(json);
+            var values = getFailrates(json);
+            
+            graph.destroy();
+            createLineGraph(ticks, values, '%d%');
         });
     }
 
@@ -94,6 +211,8 @@ $(function() {
             contentType: "application/json",
             dataType: 'jsonp',
             success: function(json) {
+                $.jqplot.config.enablePlugins = true;
+                setupGraphSelector(json)
                 createButtons(json)
                 createGraph(json[json.length - 1])
             },

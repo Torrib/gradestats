@@ -150,6 +150,10 @@ tbody > tr:hover {
     color: #A5A8A9;
 }
 
+.hide {
+    display: none;
+}
+
 @media (max-width: 767px) {
     .navbar-default .navbar-nav .open .dropdown-menu > li > a {
         color: #ecf0f1;

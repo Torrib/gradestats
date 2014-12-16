@@ -33,15 +33,24 @@
     </div>
     <div class="col-md-4">
         <div class="well text-center">
+            <div id="graph-selector">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" id="bar-graph-button">Karakterer</button>
+                    <button type="button" class="btn btn-default" id="average-graph-button">Snitt</button>
+                    <button type="button" class="btn btn-default" id="failed-graph-button">Strykprosent</button>
+                </div>
+            </div>
             <div id="grades-graph"></div>
-            {% if course.average > 0 %}
-            <ul class="nav nav-list">
-                <li>Snittkarakter: <label id="average-grade" ></label></li>
-                <li>Totalt snitt: <label id="total-average-grade" >{{ course.average|floatformat:-2 }}</label></li>
-            </ul>
-            {% endif %}
-            <div id="grade-group">
-                <div id="grade-buttons" class="btn-toolbar"></div>
+            <div id="bar-chart-data">
+                {% if course.average > 0 %}
+                    <ul class="nav nav-list">
+                        <li>Snittkarakter: <label id="average-grade" ></label></li>
+                        <li>Totalt snitt: <label id="total-average-grade" >{{ course.average|floatformat:-2 }}</label></li>
+                    </ul>
+                {% endif %}
+                <div id="grade-group">
+                    <div id="grade-buttons" class="btn-toolbar"></div>
+                </div>
             </div>
         </div>
         <div class="well">
