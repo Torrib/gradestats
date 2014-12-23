@@ -159,26 +159,21 @@ $(function() {
 
 
     function setupGraphSelector(json){
-
-        $("#bar-graph-button").addClass("active");
-
         if(json[0].passed != 0){
             $("#average-graph-button").addClass("hide");
         }
-        
-        $("#graph-selector>div").bind("click", function(){
-            $("#graph-selector>div>button.active").removeClass("active");
-        });
 
         $("#bar-graph-button").bind("click", function(){
+            $("#graph-selector > div > button.active").removeClass("active");
             $("#bar-graph-button").addClass("active");
             $("#bar-chart-data").removeClass("hide");
             graph.destroy();
             createGraph(json[selectedBarButton]);
-        });
+        }).addClass("active");
 
 
         $("#average-graph-button").bind("click", function(){
+            $("#graph-selector > div > button.active").removeClass("active");
             $("#average-graph-button").addClass("active");
             $("#bar-chart-data").addClass("hide");
 
@@ -190,6 +185,7 @@ $(function() {
         });
         
         $("#failed-graph-button").bind("click", function(){
+            $("#graph-selector > div > button.active").removeClass("active");
             $("#failed-graph-button").addClass("active");
             $("#bar-chart-data").addClass("hide");
 
@@ -201,25 +197,29 @@ $(function() {
         });
     }
 
-    $(document).ready(function()
-    {
-        $.ajax({
-            type: 'GET',
-            url: "grades/",
-            async: false,
-            jsonpCallback: 'parse',
-            contentType: "application/json",
-            dataType: 'jsonp',
-            success: function(json) {
-                $.jqplot.config.enablePlugins = true;
-                setupGraphSelector(json)
-                createButtons(json)
-                createGraph(json[json.length - 1])
-            },
-            error: function(e) {
-                console.log(e.message);
-            }
+    $.ajax({
+		type: 'GET',
+		url: "grades/",
+		async: false,
+		jsonpCallback: 'parse',
+		contentType: "application/json",
+		dataType: 'jsonp',
+		success: function(json) {
+			$.jqplot.config.enablePlugins = true;
+			setupGraphSelector(json);
+			createButtons(json);
+			createGraph(json[json.length - 1])
+		},
+		error: function(e) {
+			console.log(e.message);
+		}
+	});
+
+	$(window).resize(function() {
+        $.each(graph.series, function(index, series) {
+            series.barWidth = undefined;
         });
+        graph.replot({resetAxes: true});
     });
 
 });
