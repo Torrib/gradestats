@@ -6,12 +6,12 @@ from collections import OrderedDict
 
 
 class Course(models.Model):
-    norwegian_name = models.CharField("Norwegian Name", max_length=100)
+    norwegian_name = models.CharField("Norwegian Name", max_length=255)
     short_name = models.CharField("Short name", max_length=50)
     code = models.CharField("Code", max_length=15)
     faculty_code = models.IntegerField("Faculty Code", default=0)
 
-    english_name = models.CharField("English name", max_length=100)
+    english_name = models.CharField("English name", max_length=255)
     credit = models.FloatField("Credit", default=7.5)
     study_level = models.SmallIntegerField()
     taught_in_spring = models.BooleanField(default=False)
