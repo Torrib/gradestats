@@ -113,9 +113,9 @@ $(function() {
 
     function getLineGraphTicks(json){
         var ticks = [];
-
         for(var i = 0; i < json.length; i++){
-
+            var checked = $("#show-kont").is(':checked');
+            if(!checked && (json[i].semester_code.indexOf('K') > -1 || json[i].semester_code.indexOf('S') > -1)) continue;
             //reduce the semester code length if the ammount of semesters is to big
             if(json.length > 8){
                 var string = json[i].semester_code;
@@ -133,6 +133,8 @@ $(function() {
         var values = [];
 
         for(var i = 0; i < json.length; i++){
+            var checked = $("#show-kont").is(':checked');
+            if(!checked && (json[i].semester_code.indexOf('K') > -1 || json[i].semester_code.indexOf('S') > -1)) continue;
             values.push(json[i].average_grade);
         }
 
@@ -143,6 +145,9 @@ $(function() {
         var values = [];
 
         for(var i = 0; i < json.length; i++){
+            var checked = $("#show-kont").is(':checked');
+            if(!checked && (json[i].semester_code.indexOf('K') > -1 || json[i].semester_code.indexOf('S') > -1)) continue;
+
             if(json[i].passed === 0){
                 var total = json[i].a + json[i].b + json[i].c + json[i].d + json[i].e + json[i].f;
             }
@@ -167,6 +172,7 @@ $(function() {
             $("#graph-selector > div > button.active").removeClass("active");
             $("#bar-graph-button").addClass("active");
             $("#bar-chart-data").removeClass("hide");
+            $("#show-kont-selector").addClass("hide");
             graph.destroy();
             createGraph(json[selectedBarButton]);
         }).addClass("active");
@@ -176,7 +182,7 @@ $(function() {
             $("#graph-selector > div > button.active").removeClass("active");
             $("#average-graph-button").addClass("active");
             $("#bar-chart-data").addClass("hide");
-
+            $("#show-kont-selector").removeClass("hide");
             var ticks = getLineGraphTicks(json);
             var values = getAverageValues(json);
             
@@ -188,12 +194,29 @@ $(function() {
             $("#graph-selector > div > button.active").removeClass("active");
             $("#failed-graph-button").addClass("active");
             $("#bar-chart-data").addClass("hide");
-
+            $("#show-kont-selector").removeClass("hide");
             var ticks = getLineGraphTicks(json);
             var values = getFailrates(json);
             
             graph.destroy();
+
             createLineGraph(ticks, values, '%d%');
+        });
+
+        $("#show-kont").bind("change", function() {
+            var ticks = getLineGraphTicks(json);
+
+            graph.destroy();
+            if($("#average-graph-button").hasClass("active"))
+            {
+                var values = getAverageValues(json);
+                createLineGraph(ticks, values, '%.2f');
+            } else if($("#failed-graph-button").hasClass("active"))
+            {
+                var values = getFailrates(json);
+                 createLineGraph(ticks, values, '%d%');
+            }
+
         });
     }
 
@@ -221,6 +244,5 @@ $(function() {
         });
         graph.replot({resetAxes: true});
     });
-
 });
 
