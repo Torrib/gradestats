@@ -10,8 +10,11 @@ window.addEventListener('load', function() {
         navbar.children[2].className += ' active';
     else if(url.indexOf("api") > -1)
         navbar.children[3].className += ' active';
+
+
 });
 
 setTimeout(function() {
     $("#message-list").children('.alert:first-child').fadeOut(1000);
 }, 5000);
+

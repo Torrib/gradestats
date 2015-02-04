@@ -76,7 +76,12 @@ answer   {
 .btn-primary {
 	background-color: #577492;
 }
+
 .btn-primary:hover {
+	background-color: #3D5166;
+}
+
+.btn-primary:focus {
 	background-color: #3D5166;
 }
 
