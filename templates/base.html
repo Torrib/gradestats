@@ -27,7 +27,7 @@
                 <a class="navbar-brand" href="/index">Gradestats</a>
             </div>
             <div class="collapse navbar-collapse" id="navigationlist">
-                <ul id="navbar" class="nav navbar-nav">
+                <ul id="navbar navbar-left" class="nav navbar-nav">
                 {% if navbar %}
                 {% for key, value in navbar.items %}
                     <li class="navbar-item"><a href="/{{ key }}/">{{ value }}</a></li>

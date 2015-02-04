@@ -80,7 +80,6 @@ class NavbarItems(object):
         items = OrderedDict([
             ('index', 'Fag'),
             ('about', 'Om siden'),
-            ('faq', 'FAQ'),
             ('report', 'Rapporter feil'),
             ('api', 'API')
         ])
