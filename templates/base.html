@@ -34,6 +34,19 @@
                 {% endfor %}
                 {% endif %}
                 </ul>
+
+                <form class="navbar-form navbar-right" action="/search/" method="GET">
+                    <div class="control-group form-inline">
+                        <input autocomplete="off" id="query" name="query" value="{{query}}" type="text" class="tt-input form-control input-default"/>
+                        <select class="form-control input-default" name="faculty_code">
+                            <option value="-1">Velg fakultet eller søk på alle fakulteter</option>
+                            {% for key, value in faculties.items %}
+                                <option {% if key == selected %} selected {% endif %} value="{{key}}">{{value}}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="input-default btn btn-default">Søk</button>
+                    </div>
+                </form>
             </div>
         </div>
     </nav>
@@ -62,5 +75,47 @@
                 <p class="navbar-text pull-right">Tor-Håkon Bonsaksen, Lars Erik Græsdal-Knutrud, Håvard Holmboe Lian</p>
             </div>
         </div>
+<script src="{{ STATIC_URL }}js/typeahead.bundle.min.js"></script>
+<script src="{{ STATIC_URL }}js/bloodhound.min.js"></script>
+<script src="{{ STATIC_URL }}js/handlebars-v2.0.0.js"></script>
+<script>
+ $(function () {
+    var course = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        limit: 10,
+        remote: '/api/typeahead/course?query=%QUERY'
+    });
+
+    course.initialize();
+
+    $("#query").typeahead(
+        {
+            hint: false,
+            highlight: true
+
+        },
+        {
+            name: 'course',
+            displayKey: 'code',
+            templates: {
+                empty: '<p>Ingen treff</p>',
+                suggestion: function(value) {
+                    var q = document.getElementById("query").value;
+
+                    if(value.norwegian_name.toLowerCase().indexOf(q) != -1)
+                        return "<p>" + value.norwegian_name + "</p>";
+                    else
+                        return "<p>" + value.code + " - " + value.norwegian_name + "</p>";
+                }
+            },
+            source: course.ttAdapter()
+
+        }
+    ).on('typeahead:selected', function(event, suggestion, dataset) {
+        document.location = "/course/" + suggestion.code;
+    });
+});
+</script>
 </body>
 </html>

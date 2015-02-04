@@ -41,7 +41,7 @@ def course(request, course_code):
     course = get_object_or_404(Course, code=course_code.upper())
     tags = list(Tag.objects.filter(courses=course))
 
-    return navbar_render(request, 'course.html', {'course': course, 'tags': tags})
+    return navbar_render(request, 'course.html', {'course': course, 'tags': tags, 'faculties': Faculties.get_faculties()})
 
 
 def add_tag(request, course_code):
@@ -128,17 +128,17 @@ def report(request):
         xml_file.write(u'\n'.join(text).encode('utf8'))
         xml_file.close()
 
-        return navbar_render(request, 'report.html', {'messages': messages})
+        return navbar_render(request, 'report.html', {'messages': messages, 'faculties': Faculties.get_faculties()})
     else:
-        return navbar_render(request, 'report.html')
+        return navbar_render(request, 'report.html', {'faculties': Faculties.get_faculties()})
 
 
 def about(request):
-    return navbar_render(request, 'about.html')
+    return navbar_render(request, 'about.html', {'faculties': Faculties.get_faculties()})
 
 
 def faq(request):
     return navbar_render(request, 'faq.html')
 
 def api(request):
-    return navbar_render(request, "api_index.html")
+    return navbar_render(request, "api_index.html", {'faculties': Faculties.get_faculties()})
