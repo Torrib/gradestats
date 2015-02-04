@@ -2,10 +2,14 @@ select {
     overflow: hidden;
 }
 
+#navbar {
+    margin-right: 5px;
+}
 
 .twitter-typeahead .tt-query,
 .twitter-typeahead .tt-hint {
 	margin-bottom: 0;
+    margin-top: -6px;
 }
 .tt-hint {
 	display: block;
