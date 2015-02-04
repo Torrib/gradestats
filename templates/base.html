@@ -33,20 +33,17 @@
                     <li class="navbar-item"><a href="/{{ key }}/">{{ value }}</a></li>
                 {% endfor %}
                 {% endif %}
+                    <li>
+                        <form class="nav navbar-form navbar-right" action="/search/" method="GET">
+                            <div class="form-group">
+                                <input autocomplete="off" id="query" name="query" value="{{query}}" type="text" class="tt-input form-control input-default"/>
+                            </div>
+                            <button type="submit" class="input-default btn btn-default">Søk</button>
+                        </form>
+                    </li>
                 </ul>
 
-                <form class="navbar-form navbar-right" action="/search/" method="GET">
-                    <div class="control-group form-inline">
-                        <input autocomplete="off" id="query" name="query" value="{{query}}" type="text" class="tt-input form-control input-default"/>
-                        <select class="form-control input-default" name="faculty_code">
-                            <option value="-1">Velg fakultet eller søk på alle fakulteter</option>
-                            {% for key, value in faculties.items %}
-                                <option {% if key == selected %} selected {% endif %} value="{{key}}">{{value}}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit" class="input-default btn btn-default">Søk</button>
-                    </div>
-                </form>
+
             </div>
         </div>
     </nav>
