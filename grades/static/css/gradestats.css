@@ -107,6 +107,9 @@ tbody > tr:hover {
   margin-left: 5%;
 }
 
+#navigationlist.in {
+    overflow: visible;
+}
 
 .navbar-brand {
     margin-left: 25px;
