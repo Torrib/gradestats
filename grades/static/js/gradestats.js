@@ -167,6 +167,7 @@ $(function() {
             $("#show-kont-selector").addClass("hide");
             graph.destroy();
             createGraph(json[selectedBarButton]);
+            createButtons(globalJson);
         }).addClass("active");
 
 
