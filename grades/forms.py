@@ -7,8 +7,7 @@ class AddTagForm(forms.Form):
 
 
 class SearchForm(forms.Form):
-    query = forms.CharField(max_length=32, required=False)
-    faculty_code = forms.IntegerField()
+    query = forms.CharField(max_length=32, required=True)
 
 
 class ReportErrorForm(forms.Form):

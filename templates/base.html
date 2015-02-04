@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
     <title>{% block title %}Gradestats{% endblock%}</title>
@@ -33,16 +33,14 @@
                     <li class="navbar-item"><a href="/{{ key }}/">{{ value }}</a></li>
                 {% endfor %}
                 {% endif %}
-                    <li>
-                        <form class="nav navbar-form navbar-right" action="/search/" method="GET">
-                            <div class="form-group">
-                                <input autocomplete="off" id="query" name="query" value="{{query}}" type="text" class="tt-input form-control input-default"/>
-                            </div>
-                            <button type="submit" class="input-default btn btn-default">Søk</button>
-                        </form>
-                    </li>
                 </ul>
 
+                <form class="navbar-form" action="/search/" method="get" role="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search" name="query" id="query" />
+                </div>
+                    <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                </form>
 
             </div>
         </div>

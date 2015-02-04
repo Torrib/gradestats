@@ -40,13 +40,10 @@ select {
 .tt-suggestion {
 	display: block;
 	padding: 3px 20px;
+    cursor: pointer;
 }
-.tt-suggestion.tt-is-under-cursor {
-	color: #fff;
-	background-color: #428bca;
-}
-.tt-suggestion.tt-is-under-cursor a {
-	color: #fff;
+.tt-suggestion.tt-cursor {
+	background-color: #e6e6e6;
 }
 .tt-suggestion p {
 	margin: 0;
