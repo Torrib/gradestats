@@ -47,26 +47,20 @@ $(function() {
     }
 
     function createButtons(json){
-        if($("#grade-buttons").innerWidth() < 320){
-            var breakPoint = 3;
-        }
-        else{
-            var breakPoint = 4;
-        }
-
+        $("#grade-buttons").empty();
         var buttonGroup = document.createElement('div');
 
         $(buttonGroup).addClass("btn-group");
-
+        $("#grade-buttons").append(buttonGroup);
         for(var i = 0; i < json.length; i++){
-            if(i % breakPoint == 0 && i != 0){
-                $("#grade-buttons").append(buttonGroup);
+
+            if(($(buttonGroup).innerWidth() + 70) > $("#grade-buttons").width()){
                 buttonGroup = document.createElement('div');
                 $(buttonGroup).addClass("btn-group");
+                $("#grade-buttons").append(buttonGroup);
             }
             $(buttonGroup).append("<button type=\"button\" id=\"" + i + "\" class=\"btn-grade btn btn-default\">" + json[i].semester_code + "</button>");
         }
-        
         $("#grade-buttons").append(buttonGroup);
         $("#average-grade").text(json[0].average_grade.toFixed(2));
         $(".btn-grade").last().addClass("active");
@@ -226,7 +220,7 @@ $(function() {
 
 
 
-
+    var globalJson = undefined;
     $.ajax({
 		type: 'GET',
 		url: "grades/",
@@ -239,6 +233,7 @@ $(function() {
 			setupGraphSelector(json);
 			createButtons(json);
 			createGraph(json[json.length - 1])
+            globalJson = json;
 		},
 		error: function(e) {
 			console.log(e.message);
@@ -250,6 +245,7 @@ $(function() {
             series.barWidth = undefined;
         });
         graph.replot({resetAxes: true});
+        createButtons(globalJson);
     });
 });
 
