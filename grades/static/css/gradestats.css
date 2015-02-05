@@ -1,46 +1,71 @@
-.tt-hint {
-    height: 30px;
-    padding: 8px 12px;
-    font-size: 15px;
-    line-height: 30px;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    outline: none;
+select {
+    overflow: hidden;
 }
 
-.tt-input { /* UPDATE: newer versions use tt-input instead of tt-query */
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    margin-top: -6px;
+#navbar {
+    margin-right: 5px;
 }
 
-.tt-hint {
-    color: #999
+.twitter-typeahead {
+    width: 100%;
+    position: relative;
+}
+
+.twitter-typeahead .tt-query,
+.twitter-typeahead .tt-hint {
+
+}
+
+.twitter-typeahead .tt-hint {
+    color: #a1a1a1;
+    z-index: 1;
+    padding: 6px 12px;
+    border: 1px solid transparent;
+}
+
+.twitter-typeahead .tt-query {
+    z-index: 2;
+}
+
+.input-group-addon + .twitter-typeahead > .tt-query {
+    border-top-left-radius: 0!important;
+    border-bottom-left-radius: 0!important;
+}
+
+.input-group-appended > .twitter-typeahead > .tt-query {
+    border-top-right-radius: 0!important;
+    border-bottom-right-radius: 0!important;
 }
 
 .tt-dropdown-menu {
-    margin-top: 12px;
-    padding: 8px 0;
+    min-width: 160px;
+    margin-top: 2px;
+    padding: 5px 0;
     background-color: #fff;
     border: 1px solid #ccc;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    *border-right-width: 2px;
+    *border-bottom-width: 2px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
 }
 
 .tt-suggestion {
-    padding: 3px 20px;
-    font-size: 15px;
-    line-height: 24px;
-}
-
-.tt-suggestion.tt-cursor { /* UPDATE: newer versions use .tt-suggestion.tt-cursor */
-    color: #fff;
-    background-color: #0097cf;
+	display: block;
+	padding: 3px 20px;
     cursor: pointer;
 }
-
+.tt-suggestion.tt-cursor {
+	background-color: #e6e6e6;
+}
 .tt-suggestion p {
-    margin: 0;
+	margin: 0;
 }
 
 qa {
@@ -67,7 +92,12 @@ answer   {
 .btn-primary {
 	background-color: #577492;
 }
+
 .btn-primary:hover {
+	background-color: #3D5166;
+}
+
+.btn-primary:focus {
 	background-color: #3D5166;
 }
 
@@ -98,6 +128,9 @@ tbody > tr:hover {
   margin-left: 5%;
 }
 
+#navigationlist.in {
+    overflow: visible;
+}
 
 .navbar-brand {
     margin-left: 25px;
@@ -166,7 +199,3 @@ tbody > tr:hover {
         background-color: #3D5166;
     }
 }
-    
-
-
-

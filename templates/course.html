@@ -28,8 +28,9 @@
                 Ingen info.
             {% endif %}
         </p>
-        <hr>
+        <hr />
         <a href="http://www.ntnu.no/studier/emner/{{ course.code }}" target="_blank">http://www.ntnu.no/studier/emner/{{ course.code }}</a>
+        <hr />
     </div>
     <div class="col-md-4">
         <div class="well text-center">
@@ -52,6 +53,10 @@
                     <div id="grade-buttons" class="btn-toolbar"></div>
                 </div>
             </div>
+            <br />
+            <div class="hide text-left" id="show-kont-selector">
+                <button id="show-kont" type="button" class="btn btn-default" data-toggle="button">Vis kont</button>
+            </div>
         </div>
         <div class="well">
             <ul class="nav nav-list">
@@ -59,7 +64,7 @@
                     <label>Studiepoeng: {{ course.credit|floatformat:-1 }}</label>
                 </li>
                 <li>
-                    <label>Nivå: {{ course.course_level }}</level>
+                    <label>Nivå: {{ course.course_level }}</label>
                 </li>
                 <li>
                     <label>Vår: {% if course.taught_in_spring %}

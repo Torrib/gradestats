@@ -34,7 +34,7 @@ def index(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses = paginator.page(paginator.num_pages)
 
-    return navbar_render(request, 'index.html', {'courses': courses, 'faculties': Faculties.get_faculties()})
+    return navbar_render(request, 'index.html', {'courses': courses})
 
 
 def course(request, course_code):
@@ -66,20 +66,14 @@ def get_grades(request, course_code):
 def search(request):
     form = SearchForm(request.GET)
     query = form.data['query']
-    if 'faculty_code' in form.data:
-        faculty_code = form.data['faculty_code']
-    else:
-        faculty_code = -1
 
     if len(query) == 0:
         courses = Course.objects.all()
     else:
         courses = Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
                                         Q(short_name__icontains=query) | Q(code__icontains=query))
-    if faculty_code != "-1":
-        courses = courses.filter(faculty_code=faculty_code)
 
-    tag = Tag.objects.filter(tag=query.lower())
+    tag = Tag.objects.filter(Q(tag__istartswith=query))
 
     courses = list(courses)
 
@@ -96,8 +90,7 @@ def search(request):
     except EmptyPage:
         courses = paginator.page(paginator.num_pages)
 
-    return navbar_render(request, 'index.html', {'courses': courses, 'query': query, 'selected': str(faculty_code),
-                                  'faculties': Faculties.get_faculties()})
+    return navbar_render(request, 'index.html', {'courses': courses, 'query': query})
 
 
 def report(request):
@@ -136,9 +129,6 @@ def report(request):
 def about(request):
     return navbar_render(request, 'about.html')
 
-
-def faq(request):
-    return navbar_render(request, 'faq.html')
 
 def api(request):
     return navbar_render(request, "api_index.html")

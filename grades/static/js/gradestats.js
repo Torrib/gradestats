@@ -47,26 +47,20 @@ $(function() {
     }
 
     function createButtons(json){
-        if($("#grade-buttons").innerWidth() < 320){
-            var breakPoint = 3;
-        }
-        else{
-            var breakPoint = 4;
-        }
-
+        $("#grade-buttons").empty();
         var buttonGroup = document.createElement('div');
 
         $(buttonGroup).addClass("btn-group");
-
+        $("#grade-buttons").append(buttonGroup);
         for(var i = 0; i < json.length; i++){
-            if(i % breakPoint == 0 && i != 0){
-                $("#grade-buttons").append(buttonGroup);
+
+            if(($(buttonGroup).innerWidth() + 70) > $("#grade-buttons").width()){
                 buttonGroup = document.createElement('div');
                 $(buttonGroup).addClass("btn-group");
+                $("#grade-buttons").append(buttonGroup);
             }
             $(buttonGroup).append("<button type=\"button\" id=\"" + i + "\" class=\"btn-grade btn btn-default\">" + json[i].semester_code + "</button>");
         }
-        
         $("#grade-buttons").append(buttonGroup);
         $("#average-grade").text(json[0].average_grade.toFixed(2));
         $(".btn-grade").last().addClass("active");
@@ -111,11 +105,11 @@ $(function() {
         });
     }
 
+	var pressed = false;
     function getLineGraphTicks(json){
         var ticks = [];
-
         for(var i = 0; i < json.length; i++){
-
+            if(!pressed && (json[i].semester_code.indexOf('K') > -1 || json[i].semester_code.indexOf('S') > -1)) continue;
             //reduce the semester code length if the ammount of semesters is to big
             if(json.length > 8){
                 var string = json[i].semester_code;
@@ -133,6 +127,7 @@ $(function() {
         var values = [];
 
         for(var i = 0; i < json.length; i++){
+            if(!pressed && (json[i].semester_code.indexOf('K') > -1 || json[i].semester_code.indexOf('S') > -1)) continue;
             values.push(json[i].average_grade);
         }
 
@@ -143,6 +138,8 @@ $(function() {
         var values = [];
 
         for(var i = 0; i < json.length; i++){
+            if(!pressed && (json[i].semester_code.indexOf('K') > -1 || json[i].semester_code.indexOf('S') > -1)) continue;
+
             if(json[i].passed === 0){
                 var total = json[i].a + json[i].b + json[i].c + json[i].d + json[i].e + json[i].f;
             }
@@ -167,8 +164,10 @@ $(function() {
             $("#graph-selector > div > button.active").removeClass("active");
             $("#bar-graph-button").addClass("active");
             $("#bar-chart-data").removeClass("hide");
+            $("#show-kont-selector").addClass("hide");
             graph.destroy();
             createGraph(json[selectedBarButton]);
+            createButtons(globalJson);
         }).addClass("active");
 
 
@@ -176,7 +175,7 @@ $(function() {
             $("#graph-selector > div > button.active").removeClass("active");
             $("#average-graph-button").addClass("active");
             $("#bar-chart-data").addClass("hide");
-
+            $("#show-kont-selector").removeClass("hide");
             var ticks = getLineGraphTicks(json);
             var values = getAverageValues(json);
             
@@ -188,15 +187,41 @@ $(function() {
             $("#graph-selector > div > button.active").removeClass("active");
             $("#failed-graph-button").addClass("active");
             $("#bar-chart-data").addClass("hide");
-
+            $("#show-kont-selector").removeClass("hide");
             var ticks = getLineGraphTicks(json);
             var values = getFailrates(json);
             
             graph.destroy();
+
             createLineGraph(ticks, values, '%d%');
         });
+
+		$('#show-kont').on('click', function () {
+			pressed = !pressed;
+		    if(pressed){
+			    $(this).text('Gjem kont');
+		    } else {
+				$(this).text('Vis kont');
+			}
+			$(this).blur();
+			var ticks = getLineGraphTicks(json);
+
+            graph.destroy();
+            if($("#average-graph-button").hasClass("active"))
+            {
+                var values = getAverageValues(json);
+                createLineGraph(ticks, values, '%.2f');
+            } else if($("#failed-graph-button").hasClass("active"))
+            {
+                var values = getFailrates(json);
+                 createLineGraph(ticks, values, '%d%');
+            }
+		});
     }
 
+
+
+    var globalJson = undefined;
     $.ajax({
 		type: 'GET',
 		url: "grades/",
@@ -209,6 +234,7 @@ $(function() {
 			setupGraphSelector(json);
 			createButtons(json);
 			createGraph(json[json.length - 1])
+            globalJson = json;
 		},
 		error: function(e) {
 			console.log(e.message);
@@ -220,7 +246,7 @@ $(function() {
             series.barWidth = undefined;
         });
         graph.replot({resetAxes: true});
+        createButtons(globalJson);
     });
-
 });
 
