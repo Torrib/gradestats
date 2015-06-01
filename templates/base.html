@@ -16,7 +16,7 @@
 </head>
 <body>
     <nav class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
+        <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navigationlist">
                     <span class="sr-only">Toggle navigation</span>
@@ -24,7 +24,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/index">Gradestats</a>
+                <a class="navbar-brand" href="/index">grades.no</a>
             </div>
             <div class="collapse navbar-collapse" id="navigationlist">
                 <ul id="navbar" class="nav navbar-nav navbar-left">
@@ -35,7 +35,7 @@
                 {% endif %}
                 </ul>
 
-                <form class="navbar-form" action="/search/" method="get" role="search" style="margin-bottom: -5px;">
+                <form class="navbar-form navbar-right" action="/search/" method="get" role="search" style="margin-bottom: -5px;">
                     <div class="input-group">
                         <input type="text" class="form-control tt-query" placeholder="Søk" name="query" id="query" value="{{ query }}">
                         <div class="input-group-btn" >
@@ -48,31 +48,24 @@
             </div>
         </div>
     </nav>
-        {% if messages %}
-            <div class="container messages">
-                <div class="row">
-                    <div id="message-list" class="col-md-12">
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }}" data-alert>
-                                <button type="button" class="close"  data-dismiss="alert">&times;</button>
-                                <p>{{ message.text }}</p>
-                            </div>
-                        {% endfor %}
-                    </div>
+    {% if messages %}
+        <div class="container messages">
+            <div class="row">
+                <div id="message-list" class="col-md-12">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}" data-alert>
+                            <button type="button" class="close"  data-dismiss="alert">&times;</button>
+                            <p>{{ message.text }}</p>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
-        {% endif %}
-        <div class="container">
-           {% block content %}
-           {% endblock%}
         </div>
-        <br />
-        <div class="navbar navbar-default navbar-bottom">
-            <div class="container-fluid">
-                <p class="navbar-text pull-left">IT2805 2014</p>
-                <p class="navbar-text pull-right">Tor-Håkon Bonsaksen, Lars Erik Græsdal-Knutrud, Håvard Holmboe Lian</p>
-            </div>
-        </div>
+    {% endif %}
+    <div class="container">
+       {% block content %}
+       {% endblock%}
+    </div>
 <script src="{{ STATIC_URL }}js/typeahead.bundle.min.js"></script>
 <script src="{{ STATIC_URL }}js/bloodhound.min.js"></script>
 <script src="{{ STATIC_URL }}js/handlebars-v2.0.0.js"></script>
