@@ -54,7 +54,9 @@ class CourseTypeaheadViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             query = ""
 
-        self.queryset = self.queryset.filter(Q(code__istartswith=query) | Q(norwegian_name__istartswith=query) | Q(english_name__istartswith=query))
+        self.queryset = self.queryset.filter(Q(code__istartswith=query) |
+                                             Q(norwegian_name__istartswith=query) |
+                                             Q(english_name__istartswith=query))
 
         tag = Tag.objects.filter(Q(tag__istartswith=query))
 

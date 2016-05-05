@@ -1,5 +1,5 @@
 Django==1.7
 requests
-beautifulsoup4
+bs4
 html5lib
 djangorestframework
