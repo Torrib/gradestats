@@ -1,4 +1,4 @@
-Django==1.7
+Django==1.10.1
 requests
 bs4
 html5lib

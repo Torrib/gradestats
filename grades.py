@@ -1,24 +1,27 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
+import json
+import getpass
 import django
 from bs4 import BeautifulSoup
-import json
 import requests
-import getpass
+import logging
+import http.client as http_client
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gradestats.settings")
 django.setup()
 from grades.models import Grade, Course
 
+session = requests.session()
 
 def login(username, password):
-    session = requests.session()
     login_data = dict(feidename=username, password=password, org="ntnu.no", asLen="255")
     page = session.get("https://innsida.ntnu.no/sso/?target=KarstatProd")
 
     login_url = "https://idp.feide.no/simplesaml/module.php/feide/login.php"
 
-    soup = BeautifulSoup(page.text)
+    soup = BeautifulSoup(page.text, "html5lib")
 
     form = soup.findAll("form", {"name": "f"})[0]
 
@@ -26,7 +29,7 @@ def login(username, password):
     login_url += form["action"]
 
     reply = session.post(login_url, data=login_data)
-    reply_soup = BeautifulSoup(reply.text)
+    reply_soup = BeautifulSoup(reply.text, "html5lib")
 
     sso_wrapper_data = dict()
     sso_wrapper_data["SAMLResponse"] = reply_soup.findAll("input", {"name": "SAMLResponse"})[0]["value"]
@@ -36,14 +39,10 @@ def login(username, password):
 
     karstat = session.post(sso_wrapper_url, data=sso_wrapper_data)
 
-    karstat_soup = BeautifulSoup(karstat.text)
+    karstat_soup = BeautifulSoup(karstat.text, "html5lib")
 
-    karstat_url = "http://www.ntnu.no" + karstat_soup.findAll("form", {"name": "menuform"})[0]["action"]
-
-    session.post(karstat_url, data={"reportType": "2"})
-
-    return session
-
+    karstat_url = "https://sats.itea.ntnu.no/karstat/menuAction.do"
+    session.post(karstat_url, data={"reportType": "3"})
 
 def create_course(code, faculty):
     base_url = "http://www.ime.ntnu.no/api/course/"
@@ -82,9 +81,8 @@ def create_course(code, faculty):
 
 
 def parse_data(data, exam, faculty):
-    soup = BeautifulSoup(data, 'html5')
+    soup = BeautifulSoup(data, 'html5lib')
     tables = soup.find_all('table')
-
     # Semester info
     table_info = tables[len(tables) - 4]
     rows_info = table_info.find_all('tr')
@@ -104,7 +102,7 @@ def parse_data(data, exam, faculty):
     # Grade info
     rows_grades = soup.find_all(class_="tableRow")
     # row 5 and down is subjects
-    print("found %d exams from %s" % (len(rows_grades) - 1, semester_code))
+    print("Found %d exams from %s" % (len(rows_grades) - 1, semester_code))
     for i in range(0, len(rows_grades) - 1):
         td_grades = rows_grades[i].find_all('td')
         subject_code = td_grades[0].string.split('-')
@@ -150,8 +148,7 @@ def parse_data(data, exam, faculty):
 
 
 def main():
-
-    karstat_url = "http://www.ntnu.no/karstat/fs582001Action.do"
+    karstat_url = "https://sats.itea.ntnu.no/karstat/fs582001Action.do"
     username = input("Username: ")
     password = getpass.getpass()
     from_year = input("From year: ")
@@ -159,13 +156,12 @@ def main():
     from_faculty = input("From faculty: ")
     to_faculty = input("To faculty: ")
 
-    session = login(username, password)
+    login(username, password)
     karstat_data = dict()
     karstat_data["yearExam"] = "2013"
     karstat_data["semesterExam"] = "HØST"
     karstat_data["numberOfYears"] = "0"
     karstat_data["minCandidates"] = "3"
-    karstat_data["yearExam"] = "2013"
 
     exams = ["VÅR", "SOM", "HØST"]
 
@@ -177,25 +173,29 @@ def main():
         print("Password required")
         exit(1)
     if len(from_year) == 0:
-        from_year = 2014
+        print("From year required")
+        exit(1)
     if len(to_year) == 0:
-        to_year = 2015
+        print("To year required")
+        exit(1)
     if len(from_faculty) == 0:
-        from_faculty = 63
+        from_faculty = 60
     if len(to_faculty) == 0:
-        to_faculty = 64
+        to_faculty = 68
 
     # Iterate over years
-    for y in range(int(from_year), int(to_year)):
-        print("Getting data for " + repr(y))
-        karstat_data["yearExam"] = "" + repr(y)
+    for j in range(int(from_year), int(to_year)):
+        print("Getting data for " + repr(j))
+        karstat_data["yearExam"] = "" + repr(j)
         # Iterate over faculties
         for i in range(int(from_faculty), int(to_faculty)):
-            faculty_url = "http://www.ntnu.no/karstat/menuAction.do?faculty=" + repr(i)
+            faculty_url = "https://sats.itea.ntnu.no/karstat/menuAction.do?faculty=" + repr(i)
             print("Getting data for faculty " + repr(i))
             session.get(faculty_url)
             for exam in exams:
                 karstat_data["semesterExam"] = exam
                 grades_data = session.post(karstat_url, data=karstat_data)
                 parse_data(grades_data.text, exam, i)
-main()
+
+if __name__ == '__main__':
+    main()
