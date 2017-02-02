@@ -51,11 +51,12 @@ def create_course(code, faculty):
         return None
     data = json.loads(resp.text)
 
-    if not data["course"]:
+    if not "course" in data:
         return None
+    if not "englishName" in data["course"]:
+        data["course"]["englishName"] = ""
 
     course = Course()
-    course.code = "IT2901"
     course.norwegian_name = data["course"]["norwegianName"]
     course.english_name = data["course"]["englishName"]
     course.code = data["course"]["code"]
