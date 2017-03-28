@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 import os
-import sys
 import json
 import getpass
 import django
 from bs4 import BeautifulSoup
 import requests
-import logging
-import http.client as http_client
+from grades.models import Grade, Course
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gradestats.settings")
 django.setup()
-from grades.models import Grade, Course
 
 session = requests.session()
+
 
 def login(username, password):
     login_data = dict(feidename=username, password=password, org="ntnu.no", asLen="255")
@@ -37,12 +35,11 @@ def login(username, password):
 
     sso_wrapper_url = reply_soup.findAll("form")[0]["action"]
 
-    karstat = session.post(sso_wrapper_url, data=sso_wrapper_data)
-
-    karstat_soup = BeautifulSoup(karstat.text, "html5lib")
+    session.post(sso_wrapper_url, data=sso_wrapper_data)
 
     karstat_url = "https://sats.itea.ntnu.no/karstat/menuAction.do"
     session.post(karstat_url, data={"reportType": "3"})
+
 
 def create_course(code, faculty):
     base_url = "http://www.ime.ntnu.no/api/course/"
@@ -51,9 +48,9 @@ def create_course(code, faculty):
         return None
     data = json.loads(resp.text)
 
-    if not "course" in data:
+    if not data["course"]:
         return None
-    if not "englishName" in data["course"]:
+    if "englishName" not in data["course"]:
         data["course"]["englishName"] = ""
 
     course = Course()

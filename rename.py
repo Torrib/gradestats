@@ -3,31 +3,29 @@ import os
 import django
 import json
 import requests
-import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
+from grades.models import Course
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gradestats.settings")
 django.setup()
-from grades.models import Course
 
 base_url = "http://www.ime.ntnu.no/api/course/"
 
 courses = Course.objects.all()
 
-print "Renaming...."
+print("Renaming....")
 
 for course in courses:
     resp = requests.get(base_url + course.code)
     if not resp:
         continue
     data = json.loads(resp.text)
-    
+
     if not data["course"]:
         continue
 
-    print "Checking " + course.code
+    print("Checking " + course.code)
 
     if data["course"]["norwegianName"] != course.norwegian_name:
-        print "Renaming " + course.norwegian_name + " to " + data["course"]["norwegianName"]
+        print("Renaming " + course.norwegian_name + " to " + data["course"]["norwegianName"])
         course.norwegian_name = data["course"]["norwegianName"]
         course.save()

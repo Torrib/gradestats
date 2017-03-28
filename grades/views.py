@@ -58,7 +58,7 @@ def add_tag(request, course_code):
 
 
 def get_grades(request, course_code):
-    url = "/api/courses/%s/grades.jsonp?callback=parse" % course_code
+    url = "/api/courses/%s/grades.json" % course_code
 
     return redirect(url)
 

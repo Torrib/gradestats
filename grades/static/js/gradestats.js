@@ -226,14 +226,13 @@ $(function() {
 		type: 'GET',
 		url: "grades/",
 		async: false,
-		jsonpCallback: 'parse',
 		contentType: "application/json",
-		dataType: 'jsonp',
+		dataType: 'json',
 		success: function(json) {
 			$.jqplot.config.enablePlugins = true;
 			setupGraphSelector(json);
 			createButtons(json);
-			createGraph(json[json.length - 1])
+			createGraph(json[json.length - 1]);
             globalJson = json;
 		},
 		error: function(e) {
