@@ -5,10 +5,12 @@ import getpass
 import django
 from bs4 import BeautifulSoup
 import requests
-from grades.models import Grade, Course
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gradestats.settings")
 django.setup()
+
+# Import Django models after Django setup
+from grades.models import Grade, Course
 
 session = requests.session()
 
