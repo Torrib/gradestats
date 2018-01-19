@@ -46,10 +46,10 @@ $(function() {
         });
     }
 
-    function createButtons(json){
+    function createButtons(u_json){
         $("#grade-buttons").empty();
         var buttonGroup = document.createElement('div');
-
+	let json = u_json.sort((a, b) => parseInt(a.semester_code.slice(1, 5), 10) - parseInt(b.semester_code.slice(1, 5), 10))
         $(buttonGroup).addClass("btn-group");
         $("#grade-buttons").append(buttonGroup);
         for(var i = 0; i < json.length; i++){
