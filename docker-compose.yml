@@ -8,4 +8,4 @@ services:
             - "8080:8080"
             - "8081:8081"
         volumes:
-            - "/db.sqlite3:/srv/app/gradestats/db.sqlite3"
+            - "/opt/gradestats/db.sqlite3:/srv/app/gradestats/db.sqlite3"
