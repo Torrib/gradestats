@@ -63,6 +63,7 @@ DATABASES = {
     }
 }
 
+SECRET_KEY = ""
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'

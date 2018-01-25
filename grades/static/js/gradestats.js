@@ -49,7 +49,14 @@ $(function() {
     function createButtons(json){
         $("#grade-buttons").empty();
         var buttonGroup = document.createElement('div');
-
+        const semester_letters = {'V': 0.1, 'S': 0.2, 'K': 0.2, 'H': 0.3}
+	    json = json.sort((year1, year2) => {
+            year1.extra = semester_letters[year1.semester_code.slice(0, 1)];
+            year2.extra = semester_letters[year2.semester_code.slice(0, 1)];
+            year1.int = parseInt(year1.semester_code.slice(1, 5), 10);
+            year2.int = parseInt(year2.semester_code.slice(1, 5), 10);
+            return (year1.int + year1.extra) - (year2.int + year2.extra);
+        });
         $(buttonGroup).addClass("btn-group");
         $("#grade-buttons").append(buttonGroup);
         for(var i = 0; i < json.length; i++){
