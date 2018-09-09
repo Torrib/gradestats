@@ -3,3 +3,4 @@ requests
 bs4
 html5lib
 djangorestframework
+psycopg2-binary==2.7.4

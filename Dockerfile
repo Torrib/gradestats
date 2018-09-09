@@ -9,7 +9,10 @@ ENV DIR=/srv/app
 RUN apk add --update --no-cache \
     uwsgi-python3 \
     uwsgi-http \
-    uwsgi-corerouter
+    uwsgi-corerouter \
+    postgresql-dev \
+    build-base \
+    python3-dev
 
 RUN mkdir -p $DIR
 WORKDIR $DIR
@@ -18,6 +21,10 @@ WORKDIR $DIR
 COPY ./requirements.txt $DIR/requirements.txt
 RUN pip3 --no-cache-dir install --upgrade pip
 RUN pip3 --no-cache-dir install --upgrade -r requirements.txt
+
+RUN apk del --purge \
+    build-base \
+    python3-dev
 
 # Copy project files
 COPY . $DIR
