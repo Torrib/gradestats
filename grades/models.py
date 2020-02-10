@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from django.db.models import permalink
 from django.db.models.signals import post_init
 from collections import OrderedDict
+from django.urls import reverse
 
 
 class Course(models.Model):
@@ -40,13 +40,13 @@ class Course(models.Model):
     def __unicode__(self):
         return self.code
     
-    @permalink
+    # FIX Permalink depercated
     def get_absolute_url(self):
-        return 'course', None, {'course_code': self.code}
+        return reverse('course', kwargs={'course_code': self.code})
 
 
 class Grade(models.Model):
-    course = models.ForeignKey(Course)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     semester_code = models.CharField("Semester", max_length=10)
     
     average_grade = models.FloatField()
