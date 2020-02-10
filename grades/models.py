@@ -40,6 +40,9 @@ class Course(models.Model):
     def __unicode__(self):
         return self.code
     
+    def __str__(self):
+        return self.code
+
     # FIX Permalink depercated
     def get_absolute_url(self):
         return reverse('course', kwargs={'course_code': self.code})

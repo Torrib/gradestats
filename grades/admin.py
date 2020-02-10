@@ -4,10 +4,12 @@ from grades.models import *
 
 
 class CourseAdmin(admin.ModelAdmin):
+    search_fields = ['code']
     model = Course
 
 
 class GradeAdmin(admin.ModelAdmin):
+    search_fields = ['course__code']
     list_display = ('course', 'semester_code', 'average_grade')
     model = Grade
 
