@@ -6,7 +6,7 @@ import django
 from bs4 import BeautifulSoup
 import requests
 from scrapeCourse import getCourseData
-from course_is_digital import course_has_digital_exam_semester
+from course_is_digital import course_has_digital_exam_semester, course_has_digital_exam
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gradestats.settings")
 django.setup()
@@ -77,6 +77,10 @@ def create_course(code, faculty):
             if info['code'] == u"MÅL" and 'text' in info:
                 course.learning_goal = info['text']
     course.faculty_code = faculty
+    course.have_had_digital_exam = course_has_digital_exam(code)
+    course.exam_type = data["course"]["examType"]
+    course.grade_type = data["course"]["gradeType"]
+    course.place = data["course"]["place"]
     course.save()
     return course
 
@@ -157,6 +161,7 @@ def main():
     to_year = input("To year: ")
     from_faculty = input("From faculty: ")
     to_faculty = input("To faculty: ")
+    department = input("department, IDI is 10, enter to get for all departments: ")
 
     login(username, password)
     karstat_data = dict()
@@ -192,6 +197,8 @@ def main():
         # Iterate over faculties
         for i in range(int(from_faculty), int(to_faculty) + 1):
             faculty_url = "https://sats.itea.ntnu.no/karstat/menuAction.do?faculty=" + repr(i)
+            if(department != ""):
+                faculty_url = "https://sats.itea.ntnu.no/karstat/menuAction.do?faculty=" + repr(i) + "&department=" + department
             print("Getting data for faculty " + repr(i))
             session.get(faculty_url)
             for exam in exams:

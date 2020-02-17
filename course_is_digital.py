@@ -98,7 +98,7 @@ def course_has_digital_exam_semester(course_code: str, year: str, semester_code:
     years.append(year)
     results = retrieve_exam_type_of_years(course_code, years)
     if (results):
-        return semester_code in results[year]
+        return results[year][semester_code]
     return False
 
 
@@ -106,11 +106,17 @@ def course_has_digital_exam(course_code: str):
     # Get exams for courses with type digital / paper
     exams = retrieve_exams_digital_course(course_code)
     # check the list if any was digital, return true if we find one
-    for i in range(2010,2020): # TODO: Probaly change the values here
-      exams_year = exams[str(i)]
-      for key, value in exams_year.items(): 
-         if True == value: 
-             return True
+    years = list(exams.keys())
+    if(years):
+        for i in range(int(years[len(years) - 1]), int(years[0])):
+            try:
+                exams_year = exams[str(i)]
+                for key, value in exams_year.items(): 
+                    if value: 
+                        return True
+            except(KeyError):
+                print("No exam this year")
+        
     return False
 
 

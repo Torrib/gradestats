@@ -9,15 +9,25 @@ import requests
 
 
 def getCourseData(code, faculty):
+    tia_url = "https://api.ntnu.no/rest/v4/emne/emnekode/194_"
     base_url_no = "https://www.ntnu.no/studier/emner/" + code
     data_no = requests.get(url=base_url_no)
     soup_no = BeautifulSoup(data_no.text, 'html5lib')
-
-    if (soup_no.find_all('div', {'id': 'course-details'})[0].h1.get_text() != "\n                Ingen info for gitt studieår\n            "):
+    #tia = requests.get(url=tia_url + code + "_1").text
+    course_detail_h1 = "Ingen info for gitt studieår"
+    try:
+        course_detail_h1 = soup_no.find_all('div', {'id': 'course-details'})[0].h1.get_text().strip()
+    except IndexError:
+        print("Something very wrong for course: " + code)
+    if (course_detail_h1 != "Ingen info for gitt studieår"):
         base_url_eng = "https://www.ntnu.edu/studies/courses/" + code
         data_eng = requests.get(url=base_url_eng)
         soup_eng = BeautifulSoup(data_eng.text, 'html5lib')
-        facts_about_course = soup_no.findAll('div', {'class': 'card-body'})[1].p.get_text().split(":")
+        facts_about_course = ""
+        try:
+            facts_about_course = soup_no.findAll('div', {'class': 'card-body'})[1].p.get_text().split(":")
+        except IndexError:
+            print("Cannot find facts about course at all, code " + code)
         credit = -1
         try:
             credit = float(facts_about_course[2].split("\n")[2][20:24])
@@ -52,7 +62,13 @@ def getCourseData(code, faculty):
         taught_in_autumn = False
         taught_in_spring = False
         taught_in_english = False
-        classes = soup_no.findAll('div', {'class': 'card-body'})[2].get_text().split("Undervises")
+        undervisning = soup_no.findAll('div', {'class': 'card-body'})[2]
+        classes = undervisning.get_text().split("Undervises")
+        place = ""
+        try:
+            place = undervisning.get_text().split("Sted:")[1].strip()
+        except IndexError:
+            print("Cannot get place")
         for elements in classes:
             if("HØST" in elements):
                 taught_in_autumn = True
@@ -62,6 +78,18 @@ def getCourseData(code, faculty):
                 taught_in_english = True
         content = None
         infoType = []
+        exam_type = ""
+        grade_type = ""
+        try:
+            exam_typeRaw = soup_no.find_all('div', {'class': 'content-assessment'})[0].p.contents[0].strip().split(":")[1]
+            exam_type = exam_typeRaw[1:len(exam_typeRaw)]
+        except IndexError:
+            print("Cannot get exam type")
+        try:
+            grade_typeRaw = soup_no.find_all('div', {'class': 'content-assessment'})[0].p.contents[2].strip().split(":")[1]
+            grade_type = grade_typeRaw[1:len(grade_typeRaw)]
+        except IndexError:
+            print("Cannot get exam type")
         try:
             content = soup_no.find_all('div', {'id': 'course-content-toggler'})[0].p.get_text()
             infoType.append({"code": "INNHOLD", "text": content})
@@ -92,17 +120,20 @@ def getCourseData(code, faculty):
                 "taughtInAutumn": taught_in_autumn,
                 "taughtInSpring": taught_in_spring,
                 "taughtInEnglish": taught_in_english,
-                "infoType": infoType
+                "infoType": infoType,
+                "examType": exam_type,
+                "gradeType": grade_type,
+                "place": place
             }
         }
         return json.dumps(course)
 
     else:
-        print("Grades - API")
+        print("Grades.no - API - Fallback for course: " + code)
         base_url = "https://grades.no/api/courses/"
         resp = requests.get(url=base_url + code)
-        data = json.loads(resp.text)
-        if (not "detail" in data):
+        data = json.loads(resp.text) if resp.status_code == 200 else None
+        if (data and not "detail" in data):
             infoType = []
             if "content" in data:
                 infoType.append({"code": "INNHOLD", "text": data["content"]})
@@ -123,11 +154,15 @@ def getCourseData(code, faculty):
                     "taughtInAutumn": data["taught_in_autumn"],
                     "taughtInSpring": data["taught_in_spring"],
                     "taughtInEnglish": data["taught_in_english"],
-                    "infoType": infoType
+                    "infoType": infoType,
+                    "examType": "",
+                    "gradeType": "",
+                    "place": ""
                 }
             }
             return json.dumps(course)
 
+        print("No information about course: " + code +  " could be found - skipping")
         return None
 
 
