@@ -81,14 +81,14 @@ def retrieve_exam_type_of_years(
                     term_std = "Spring"
                 elif term_txt == "Høst":
                     term_std = "Fall"
+                elif term_txt == "Sommer":
+                    term_std = "Summer"
                 else:
                     continue
                 term_is_digital_dict[term_std] = system.text.strip() == "INSPERA"
             result[year] = term_is_digital_dict
             # sleep a little bit to avoid hammering the website
-            noise = random.random() * sleep_time_mean_ms / 2 - sleep_time_mean_ms / 4
-            time_to_sleep = sleep_time_mean_ms + noise
-            time.sleep(time_to_sleep)
+            time.sleep(sleep_time_mean_ms)
         return result
 
 
@@ -103,16 +103,18 @@ def course_have_digital_exam_semester(course_code: str, year: str, semester_code
 
 
 def course_have_digital_exam(course_code: str):
-    digitalExams = retrieve_exams_for_course(course_code)
+    # Get exams for courses with type digital / paper
+    exams = retrieve_exams_digital_course(course_code)
+    # check the list if any was digital, return true if we find one
     for i in range(2010,2020): # TODO: Probaly change the values here
-      exams_year = digitalExams[str(i)]
+      exams_year = exams[str(i)]
       for key, value in exams_year.items(): 
          if True == value: 
              return True
     return False
 
 
-def retrieve_exams_for_course(course_code: str) -> List[str]:
+def retrieve_exams_digital_course(course_code: str) -> List[str]:
     years = retrieve_exam_years(course_code)
     return retrieve_exam_type_of_years(course_code, years)
 

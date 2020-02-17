@@ -6,6 +6,7 @@ import django
 from bs4 import BeautifulSoup
 import requests
 from scrapeCourse import getCourseData
+from course_is_digital import course_have_digital_exam_semester
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gradestats.settings")
 django.setup()
@@ -133,6 +134,7 @@ def parse_data(data, exam, faculty):
             grades.c = round((int(td_grades[15].string.strip()) / 100.0) * passing)
             grades.d = round((int(td_grades[16].string.strip()) / 100.0) * passing)
             grades.e = round((int(td_grades[17].string.strip()) / 100.0) * passing)
+            grades.digital_exam = course_have_digital_exam_semester(subject_code, semester_code[1:5], semester_code[0:1])
 
             s = grades.a + grades.b + grades.c + grades.d + grades.e + grades.f
 

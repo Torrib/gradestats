@@ -53,6 +53,7 @@ class Grade(models.Model):
     semester_code = models.CharField("Semester", max_length=10)
     
     average_grade = models.FloatField()
+    digital_exam = models.BooleanField(default=False)
 
     passed = models.IntegerField(default=0)
     a = models.SmallIntegerField(default=0)
