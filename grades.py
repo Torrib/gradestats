@@ -5,6 +5,7 @@ import getpass
 import django
 from bs4 import BeautifulSoup
 import requests
+from scrapeCourse import getCourseData
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gradestats.settings")
 django.setup()
@@ -44,11 +45,10 @@ def login(username, password):
 
 
 def create_course(code, faculty):
-    base_url = "http://www.ime.ntnu.no/api/course/"
-    resp = requests.get(url=base_url + code)
+    resp = getCourseData(code, faculty)
     if not resp:
         return None
-    data = json.loads(resp.text)
+    data = json.loads(resp)
 
     if not data["course"]:
         return None
