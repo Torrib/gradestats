@@ -186,11 +186,11 @@ def main():
         to_faculty = 68
 
     # Iterate over years
-    for j in range(int(from_year), int(to_year)):
+    for j in range(int(from_year), int(to_year) + 1):
         print("Getting data for " + repr(j))
         karstat_data["yearExam"] = "" + repr(j)
         # Iterate over faculties
-        for i in range(int(from_faculty), int(to_faculty)):
+        for i in range(int(from_faculty), int(to_faculty) + 1):
             faculty_url = "https://sats.itea.ntnu.no/karstat/menuAction.do?faculty=" + repr(i)
             print("Getting data for faculty " + repr(i))
             session.get(faculty_url)
