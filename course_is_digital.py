@@ -92,7 +92,7 @@ def retrieve_exam_type_of_years(
         return result
 
 
-def course_have_digital_exam_semester(course_code: str, year: str, semester_code: str):
+def course_has_digital_exam_semester(course_code: str, year: str, semester_code: str):
     semester_code = 'Spring' if semester_code == "V" else 'Fall' if semester_code == "H" else 'Summer'
     years = []
     years.append(year)
@@ -102,7 +102,7 @@ def course_have_digital_exam_semester(course_code: str, year: str, semester_code
     return False
 
 
-def course_have_digital_exam(course_code: str):
+def course_has_digital_exam(course_code: str):
     # Get exams for courses with type digital / paper
     exams = retrieve_exams_digital_course(course_code)
     # check the list if any was digital, return true if we find one
