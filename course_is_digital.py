@@ -12,6 +12,14 @@ HTML_PARSER = "html5lib"  # "html5lib" is external dependency, "html.parser" is 
 
 
 def retrieve_exam_years(course_code: str) -> List[str]:
+    """
+    Given a NTNU course code, return a list of years that course
+    had an exam. The year is the study year, so 2017
+    means fall 2017 and spring 2018
+    
+    :param course_code: the NTNU course code
+    :return: a list of (university) years
+    """
     course_url = URL_FORMAT_STRING.format(course_code)
     response = requests.get(course_url)
     if response.status_code != 200:
@@ -19,11 +27,10 @@ def retrieve_exam_years(course_code: str) -> List[str]:
     soup = bs4.BeautifulSoup(response.text, HTML_PARSER)
     select_tag_exam_year: Optional[bs4.element.Tag] = soup.find(attrs={"id": "selectedYear"})
     if select_tag_exam_year is None:
-        raise Exception(f"Couldn't find the exam year select element, fagkode={course_code}")
+        warn(f"Couldn't find the exam year select element, fagkode={course_code}, returning empty list")
+        return []
     
-    exam_years: List[str] = []
-    for option in select_tag_exam_year.find_all("option"):
-        exam_years.append(option["value"])
+    exam_years: List[str] = [option["value"] for option in select_tag_exam_year.find_all("option")]
     
     return exam_years
 
@@ -32,6 +39,17 @@ def retrieve_exam_type_of_years(
         course_code: str,
         years: List[str],
         sleep_time_mean_ms=0.1) -> Dict[str, Dict[str, bool]]:
+    """
+    Return a dictionary that maps course codes to a dictionary of
+    "Fall" or "Spring" that maps to True or False, True if that exam
+    was digital, False otherwise
+    
+    
+    :param course_code: NTNU course code
+    :param years: list of (university) years to retrieve
+    :param sleep_time_mean_ms: average time to sleep between each https call
+    :return:
+    """
     with requests.Session() as session:
         session = requests.Session()
         result = dict()
@@ -46,7 +64,8 @@ def retrieve_exam_type_of_years(
                 continue
             dl: Optional[bs4.element.Tag] = omEksamen.find("dl")
             if dl is None:
-                raise Exception(f"omEksamen tag for {course_code} year {year} had no dl tag")
+                warn(f"omEksamen tag for {course_code} year {year} had no dl tag, skipping")
+                continue
             term_is_digital_dict: Dict[str, bool] = dict()
             for dt in dl.find_all("dt"):
                 term: Optional[bs4.element.Tag] = dt.find(class_="exam-term")
@@ -67,8 +86,8 @@ def retrieve_exam_type_of_years(
                 term_is_digital_dict[term_std] = system.text.strip() == "INSPERA"
             result[year] = term_is_digital_dict
             # sleep a little bit to avoid hammering the website
-            # from 0.5 to 1.5 of mean time
-            time_to_sleep = random.random() * sleep_time_mean_ms / 2 + sleep_time_mean_ms
+            noise = random.random() * sleep_time_mean_ms / 2 - sleep_time_mean_ms / 4
+            time_to_sleep = sleep_time_mean_ms + noise
             time.sleep(time_to_sleep)
         return result
 
