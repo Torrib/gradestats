@@ -40,10 +40,9 @@ def retrieve_exam_type_of_years(
         years: List[str],
         sleep_time_mean_ms=0.1) -> Dict[str, Dict[str, bool]]:
     """
-    Return a dictionary that maps course codes to a dictionary of
+    Return a dictionary that maps years to a dictionary of
     "Fall" or "Spring" that maps to True or False, True if that exam
     was digital, False otherwise
-    
     
     :param course_code: NTNU course code
     :param years: list of (university) years to retrieve
@@ -92,38 +91,26 @@ def retrieve_exam_type_of_years(
         return result
 
 
-def course_has_digital_exam_semester(course_code: str, year: str, semester_code: str):
+def course_has_digital_exam_semester(course_code: str, year: str, semester_code: str) -> bool:
     semester_code = 'Spring' if semester_code == "V" else 'Fall' if semester_code == "H" else 'Summer'
-    years = []
-    years.append(year)
-    results = retrieve_exam_type_of_years(course_code, years)
-    if (results):
-        try:
-            return results[year][semester_code]
-        except KeyError:
-            print(semester_code + " cannot be found in results: " +  str(results))
-    return False
+    results = retrieve_exam_type_of_years(course_code, [year])
+    if semester_code not in results[year]:
+        return False
+    return results[year][semester_code]
 
 
-def course_has_digital_exam(course_code: str):
+def course_has_digital_exam(course_code: str) -> bool:
     # Get exams for courses with type digital / paper
     exams = retrieve_exams_digital_course(course_code)
     # check the list if any was digital, return true if we find one
-    years = list(exams.keys())
-    if(years):
-        for i in range(int(years[len(years) - 1]), int(years[0])):
-            try:
-                exams_year = exams[str(i)]
-                for key, value in exams_year.items(): 
-                    if value: 
-                        return True
-            except(KeyError):
-                print("No exam this year")
-        
+    for year in exams:
+        for term in exams[year]:
+            if exams[year][term]:
+                return True
     return False
 
 
-def retrieve_exams_digital_course(course_code: str) -> List[str]:
+def retrieve_exams_digital_course(course_code: str) -> Dict[str, Dict[str, bool]]:
     years = retrieve_exam_years(course_code)
     return retrieve_exam_type_of_years(course_code, years)
 
