@@ -98,7 +98,10 @@ def course_has_digital_exam_semester(course_code: str, year: str, semester_code:
     years.append(year)
     results = retrieve_exam_type_of_years(course_code, years)
     if (results):
-        return results[year][semester_code]
+        try:
+            return results[year][semester_code]
+        except KeyError:
+            print(semester_code + " cannot be found in results: " +  str(results))
     return False
 
 
