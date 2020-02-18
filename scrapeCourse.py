@@ -6,12 +6,13 @@ import json
 import re
 from bs4 import BeautifulSoup
 import requests
+headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
 
 
 def getCourseData(code, faculty):
     tia_url = "https://api.ntnu.no/rest/v4/emne/emnekode/194_"
     base_url_no = "https://www.ntnu.no/studier/emner/" + code
-    data_no = requests.get(url=base_url_no)
+    data_no = requests.get(url=base_url_no, headers=headers)
     soup_no = BeautifulSoup(data_no.text, 'html5lib')
     #tia = requests.get(url=tia_url + code + "_1").text
     course_detail_h1 = "Ingen info for gitt studieår"
@@ -21,7 +22,7 @@ def getCourseData(code, faculty):
         print("Something very wrong for course: " + code)
     if (course_detail_h1 != "Ingen info for gitt studieår"):
         base_url_eng = "https://www.ntnu.edu/studies/courses/" + code
-        data_eng = requests.get(url=base_url_eng)
+        data_eng = requests.get(url=base_url_eng, headers=headers)
         soup_eng = BeautifulSoup(data_eng.text, 'html5lib')
         facts_about_course = ""
         try:
@@ -131,7 +132,7 @@ def getCourseData(code, faculty):
     else:
         print("Grades.no - API - Fallback for course: " + code)
         base_url = "https://grades.no/api/courses/"
-        resp = requests.get(url=base_url + code)
+        resp = requests.get(url=base_url + code, headers=headers)
         data = json.loads(resp.text) if resp.status_code == 200 else None
         if (data and not "detail" in data):
             infoType = []

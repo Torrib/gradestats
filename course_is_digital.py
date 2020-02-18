@@ -9,7 +9,7 @@ import bs4
 URL_FORMAT_STRING = "https://www.ntnu.no/studier/emner/{}#tab=omEksamen"
 URL_COURSE_YEAR_FORMAT_STRING = "https://www.ntnu.no/studier/emner/{}/{}#tab=omEksamen"
 HTML_PARSER = "html5lib"  # "html5lib" is external dependency, "html.parser" is python built-in
-
+headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
 
 def retrieve_exam_years(course_code: str) -> List[str]:
     """
@@ -21,7 +21,7 @@ def retrieve_exam_years(course_code: str) -> List[str]:
     :return: a list of (university) years
     """
     course_url = URL_FORMAT_STRING.format(course_code)
-    response = requests.get(course_url)
+    response = requests.get(url=course_url, headers=headers)
     if response.status_code != 200:
         warn(f"WARN: Response was not 200! For course {course_code}, was {response.status_code}")
     soup = bs4.BeautifulSoup(response.text, HTML_PARSER)
