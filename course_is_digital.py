@@ -94,7 +94,7 @@ def retrieve_exam_type_of_years(
 def course_has_digital_exam_semester(course_code: str, year: str, semester_code: str) -> bool:
     semester_code = 'Spring' if semester_code == "V" else 'Fall' if semester_code == "H" else 'Summer'
     results = retrieve_exam_type_of_years(course_code, [year])
-    if semester_code not in results[year]:
+    if year not in results or semester_code not in results[year]:
         return False
     return results[year][semester_code]
 
