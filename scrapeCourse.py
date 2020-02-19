@@ -6,13 +6,29 @@ import json
 import re
 from bs4 import BeautifulSoup
 import requests
-headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0' }
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+s = requests.Session()
+
+def requests_retry_session(retries=3, backoff_factor=0.3, status_forcelist=(500, 502, 504), session=None):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
 
 
 def getCourseData(code, faculty):
     tia_url = "https://api.ntnu.no/rest/v4/emne/emnekode/194_"
     base_url_no = "https://www.ntnu.no/studier/emner/" + code
-    data_no = requests.get(url=base_url_no, headers=headers)
+    data_no = requests_retry_session(session=s).get(url=base_url_no)
     soup_no = BeautifulSoup(data_no.text, 'html5lib')
     #tia = requests.get(url=tia_url + code + "_1").text
     course_detail_h1 = "Ingen info for gitt studieår"
@@ -22,7 +38,7 @@ def getCourseData(code, faculty):
         print("Something very wrong for course: " + code)
     if (course_detail_h1 != "Ingen info for gitt studieår"):
         base_url_eng = "https://www.ntnu.edu/studies/courses/" + code
-        data_eng = requests.get(url=base_url_eng, headers=headers)
+        data_eng = requests_retry_session(session=s).get(url=base_url_eng)
         soup_eng = BeautifulSoup(data_eng.text, 'html5lib')
         facts_about_course = ""
         try:
@@ -132,7 +148,7 @@ def getCourseData(code, faculty):
     else:
         print("Grades.no - API - Fallback for course: " + code)
         base_url = "https://grades.no/api/courses/"
-        resp = requests.get(url=base_url + code, headers=headers)
+        resp = requests_retry_session(session=s).get(url=base_url + code)
         data = json.loads(resp.text) if resp.status_code == 200 else None
         if (data and not "detail" in data):
             infoType = []
