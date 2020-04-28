@@ -6,18 +6,17 @@ from .router import SharedAPIRootRouter
 
 urlpatterns = [
     path("docs/", views.SwaggerUIView.as_view(), name="swagger-ui"),
-    path(
-        "openapi-schema",
-        views.OpenAPISchemaView.as_view(),
-        name="openapi-schema",
-    ),
+    path("openapi-schema", views.OpenAPISchemaView.as_view(), name="openapi-schema"),
 ]
 
 router = SharedAPIRootRouter()
 
 CoursesRouter = router.register("courses", views.CourseViewSet, basename="courses")
 CourseGradesRouter = CoursesRouter.register(
-    "grades", views.GradeViewSet, basename="course-grades", parents_query_lookups=["course__code"]
+    "grades",
+    views.GradeViewSet,
+    basename="course-grades",
+    parents_query_lookups=["course__code"],
 )
 
 urlpatterns += router.urls

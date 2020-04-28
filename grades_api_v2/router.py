@@ -1,4 +1,7 @@
-from rest_framework_extensions.routers import ExtendedSimpleRouter, ExtendedDefaultRouter
+from rest_framework_extensions.routers import (
+    ExtendedSimpleRouter,
+    ExtendedDefaultRouter,
+)
 
 
 class SharedAPIRootRouter(ExtendedSimpleRouter):

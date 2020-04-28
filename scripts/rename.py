@@ -26,6 +26,11 @@ for course in courses:
     print("Checking " + course.code)
 
     if data["course"]["norwegianName"] != course.norwegian_name:
-        print("Renaming " + course.norwegian_name + " to " + data["course"]["norwegianName"])
+        print(
+            "Renaming "
+            + course.norwegian_name
+            + " to "
+            + data["course"]["norwegianName"]
+        )
         course.norwegian_name = data["course"]["norwegianName"]
         course.save()
