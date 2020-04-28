@@ -1,0 +1,17 @@
+name: Publish to registry
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish to registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: gradestats
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: registry.online.ntnu.no
+          tag_names: true
