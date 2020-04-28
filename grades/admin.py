@@ -4,10 +4,15 @@ from grades.models import *
 
 
 class CourseAdmin(admin.ModelAdmin):
+    list_display = ('code', 'place', 'have_had_digital_exam', 'exam_type', 'grade_type')
+    list_filter = ('place', 'have_had_digital_exam', 'exam_type', 'grade_type')
+    search_fields = ['code']
     model = Course
 
 
 class GradeAdmin(admin.ModelAdmin):
+    search_fields = ['course__code']
+    list_filter = ('semester_code', 'digital_exam')
     list_display = ('course', 'semester_code', 'average_grade')
     model = Grade
 
