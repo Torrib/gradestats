@@ -27,10 +27,10 @@ urlpatterns = [
 router = SimpleRouter(trailing_slash=False)
 router.register("api/courses", CourseViewSet)  # Create routes for Courses
 router.register(
-    "api/courses/<course_code>/grades", GradeViewSet,
+    r"api/courses/(?P<course_code>\w+)/grades", GradeViewSet,
 )
 router.register(
-    "api/courses/<course_code>/grades/", GradeViewSet,
+    r"api/courses/(?P<course_code>\w+)/grades/", GradeViewSet,
 )
 router.register("api/index", CourseIndexViewSet)
 router.register("api/typeahead/course", CourseTypeaheadViewSet)
