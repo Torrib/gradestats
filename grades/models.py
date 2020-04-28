@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from django.db.models import permalink
 from django.db.models.signals import post_init
 from collections import OrderedDict
+from django.urls import reverse
 
 
 class Course(models.Model):
@@ -10,6 +10,10 @@ class Course(models.Model):
     short_name = models.CharField("Short name", max_length=50)
     code = models.CharField("Code", max_length=15)
     faculty_code = models.IntegerField("Faculty Code", default=0)
+    exam_type = models.CharField("Exam Type", max_length=255, default="")
+    grade_type = models.CharField("Grade Type", max_length=255, default="")
+    place = models.CharField("Place", max_length=255, default="")
+    have_had_digital_exam = models.BooleanField(default=False)
 
     english_name = models.CharField("English name", max_length=255)
     credit = models.FloatField("Credit", default=7.5)
@@ -40,16 +44,20 @@ class Course(models.Model):
     def __unicode__(self):
         return self.code
     
-    @permalink
+    def __str__(self):
+        return self.code
+
+    # FIX Permalink depercated
     def get_absolute_url(self):
-        return 'course', None, {'course_code': self.code}
+        return reverse('course', kwargs={'course_code': self.code})
 
 
 class Grade(models.Model):
-    course = models.ForeignKey(Course)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     semester_code = models.CharField("Semester", max_length=10)
     
     average_grade = models.FloatField()
+    digital_exam = models.BooleanField(default=False)
 
     passed = models.IntegerField(default=0)
     a = models.SmallIntegerField(default=0)
@@ -90,13 +98,14 @@ class Faculties(object):
     @staticmethod
     def get_faculties():
         faculties = dict()
-        faculties['61'] = u'(AB) Fakultet for arkitektur og billedkunst'
+        faculties['60'] = u'(ØK) Fakultet for økonomi'
+        faculties['61'] = u'(AD) Fakultet for arkitektur og design'
         faculties['62'] = u'(HF) Det humanistiske fakultet'
-        faculties['63'] = u'(IME) Fakultet for informasjonsteknologi, matematikk og elektroteknikk'
-        faculties['64'] = u'(IVT) Fakultet for ingeniørvitenskap og teknologi'
-        faculties['65'] = u'(DMF) Det medisinske fakultet'
-        faculties['66'] = u'(NT) Fakultet for naturvitenskap og teknologi'
-        faculties['67'] = u'(SVT) Fakultet for samfunnsvitenskap og teknologiledelse'
+        faculties['63'] = u'(IE) Fakultet for informasjonsteknologi og elektroteknikk '
+        faculties['64'] = u'(IV) Fakultet for ingeniørvitenskap'
+        faculties['65'] = u'(MH) Fakultet for medisin og helsevitenskap'
+        faculties['66'] = u'(NV) Fakultet for naturvitenskap'
+        faculties['67'] = u'(SU) Fakultet for samfunns- og utdanningsvitenskap'
         return faculties
 
 
