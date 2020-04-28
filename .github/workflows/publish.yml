@@ -15,4 +15,5 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           registry: registry.online.ntnu.no
+          workdir: .
           tag_names: true
