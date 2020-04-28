@@ -14,18 +14,24 @@ class ReportErrorForm(forms.Form):
     course_code = forms.CharField(
         label="Fagkode",
         max_length=16,
-        validators=[RegexValidator(
-                    regex=r'^[a-zA-Z\xc6\xd8\xc5\xf8\xe6\xe5]{2,8}[\d]{2,4}$',
-                    message="Invalid course code",
-                    code='invalid_course_code')])
+        validators=[
+            RegexValidator(
+                regex=r"^[a-zA-Z\xc6\xd8\xc5\xf8\xe6\xe5]{2,8}[\d]{2,4}$",
+                message="Invalid course code",
+                code="invalid_course_code",
+            )
+        ],
+    )
     semester_code = forms.CharField(
         label="Semester",
         max_length=5,
         required=False,
-        validators=[RegexValidator(
-                    regex=r'^[VHS]\d{4,4}$',
-                    message="Invalid semester code",
-                    code='invalid_semester_code')])
+        validators=[
+            RegexValidator(
+                regex=r"^[VHS]\d{4,4}$",
+                message="Invalid semester code",
+                code="invalid_semester_code",
+            )
+        ],
+    )
     description = forms.CharField(label="Beskrivelse")
-
-

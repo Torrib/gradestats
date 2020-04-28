@@ -35,8 +35,12 @@ class CourseFilter(filterset.FilterSet):
 
 class GradeFilter(filterset.FilterSet):
     attendee_count = filters.NumberFilter(field_name="attendee_count")
-    attendee_count__lte = filters.NumberFilter(field_name="attendee_count", lookup_expr="lte")
-    attendee_count__gte = filters.NumberFilter(field_name="attendee_count", lookup_expr="gte")
+    attendee_count__lte = filters.NumberFilter(
+        field_name="attendee_count", lookup_expr="lte"
+    )
+    attendee_count__gte = filters.NumberFilter(
+        field_name="attendee_count", lookup_expr="gte"
+    )
 
     class Meta:
         model = Grade

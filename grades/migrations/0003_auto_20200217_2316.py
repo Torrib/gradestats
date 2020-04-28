@@ -5,29 +5,31 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('grades', '0002_grade_digital_exam'),
-    ]
+    dependencies = [("grades", "0002_grade_digital_exam")]
 
     operations = [
         migrations.AddField(
-            model_name='course',
-            name='exam_type',
-            field=models.CharField(default='', max_length=255, verbose_name='Exam Type'),
+            model_name="course",
+            name="exam_type",
+            field=models.CharField(
+                default="", max_length=255, verbose_name="Exam Type"
+            ),
         ),
         migrations.AddField(
-            model_name='course',
-            name='grade_type',
-            field=models.CharField(default='', max_length=255, verbose_name='Grade Type'),
+            model_name="course",
+            name="grade_type",
+            field=models.CharField(
+                default="", max_length=255, verbose_name="Grade Type"
+            ),
         ),
         migrations.AddField(
-            model_name='course',
-            name='have_had_digital_exam',
+            model_name="course",
+            name="have_had_digital_exam",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='course',
-            name='place',
-            field=models.CharField(default='', max_length=255, verbose_name='Place'),
+            model_name="course",
+            name="place",
+            field=models.CharField(default="", max_length=255, verbose_name="Place"),
         ),
     ]

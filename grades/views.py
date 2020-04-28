@@ -11,9 +11,7 @@ import uuid
 
 def navbar_render(request, args, dictionary={}):
 
-    kwargs = {
-        'navbar': NavbarItems.get_items()
-    }
+    kwargs = {"navbar": NavbarItems.get_items()}
     kwargs.update(dictionary)
 
     return render(request, args, kwargs)
@@ -23,7 +21,7 @@ def index(request):
     courses = Course.objects.all()
 
     paginator = Paginator(courses, 20)
-    page = request.GET.get('page')
+    page = request.GET.get("page")
 
     try:
         courses = paginator.page(page)
@@ -34,14 +32,14 @@ def index(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         courses = paginator.page(paginator.num_pages)
 
-    return navbar_render(request, 'index.html', {'courses': courses})
+    return navbar_render(request, "index.html", {"courses": courses})
 
 
 def course(request, course_code):
     course = get_object_or_404(Course, code=course_code.upper())
     tags = list(Tag.objects.filter(courses=course))
 
-    return navbar_render(request, 'course.html', {'course': course, 'tags': tags})
+    return navbar_render(request, "course.html", {"course": course, "tags": tags})
 
 
 def add_tag(request, course_code):
@@ -49,12 +47,12 @@ def add_tag(request, course_code):
     form = AddTagForm(request.POST)
 
     if form.is_valid():
-        tag = Tag.objects.get_or_create(tag=form.cleaned_data['tag'].lower())
+        tag = Tag.objects.get_or_create(tag=form.cleaned_data["tag"].lower())
         tag = tag[0]
         tag.save()
         tag.courses.add(course)
 
-    return redirect('course', course_code=course_code.upper())
+    return redirect("course", course_code=course_code.upper())
 
 
 def get_grades(request, course_code):
@@ -65,13 +63,17 @@ def get_grades(request, course_code):
 
 def search(request):
     form = SearchForm(request.GET)
-    query = form.data['query']
+    query = form.data["query"]
 
     if len(query) == 0:
         courses = Course.objects.all()
     else:
-        courses = Course.objects.filter(Q(norwegian_name__icontains=query) | Q(english_name__icontains=query) |
-                                        Q(short_name__icontains=query) | Q(code__icontains=query))
+        courses = Course.objects.filter(
+            Q(norwegian_name__icontains=query)
+            | Q(english_name__icontains=query)
+            | Q(short_name__icontains=query)
+            | Q(code__icontains=query)
+        )
 
     tag = Tag.objects.filter(Q(tag__istartswith=query))
 
@@ -81,7 +83,7 @@ def search(request):
         courses.extend(c for c in tag[0].courses.all() if c not in courses)
 
     paginator = Paginator(courses, 20)
-    page = request.GET.get('page')
+    page = request.GET.get("page")
 
     try:
         courses = paginator.page(page)
@@ -90,44 +92,55 @@ def search(request):
     except EmptyPage:
         courses = paginator.page(paginator.num_pages)
 
-    return navbar_render(request, 'index.html', {'courses': courses, 'query': query})
+    return navbar_render(request, "index.html", {"courses": courses, "query": query})
 
 
 def report(request):
     form = ReportErrorForm(request.POST)
 
     if form.is_valid():
-        messages = [{'tags': 'success', 'text': u"Takk for at du hjelper til med å gjøre denne siden bedre!"}]
+        messages = [
+            {
+                "tags": "success",
+                "text": u"Takk for at du hjelper til med å gjøre denne siden bedre!",
+            }
+        ]
 
-        file_path = 'reports/' + str(uuid.uuid4()) + '.xml'
+        file_path = "reports/" + str(uuid.uuid4()) + ".xml"
         while os.path.isfile(file_path):
-            file_path = 'reports/' + str(uuid.uuid4()) + '.xml'
+            file_path = "reports/" + str(uuid.uuid4()) + ".xml"
 
-        f = open(file_path, 'w+')
+        f = open(file_path, "w+")
         xml_file = File(f)
 
         text = (
-            u"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-            u"<!DOCTYPE bank SYSTEM \"report.dtd\">",
-            u"<report xmlns=\"http://www.w3schools.com\"",
-            u"\txmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
-            u"\txsi:schemaLocation=\"report.xsd\">",
-            u"\t<course>", u"\t\t" + form.cleaned_data['course_code'], u"\t</course>",
-            u"\t<semester>", u"\t\t" + form.cleaned_data['semester_code'], u"\t</semester>",
-            u"\t<description>", u"\t\t" + form.cleaned_data['description'], u"\t</description>",
-            u"</report>"
+            u'<?xml version="1.0" encoding="UTF-8"?>',
+            u'<!DOCTYPE bank SYSTEM "report.dtd">',
+            u'<report xmlns="http://www.w3schools.com"',
+            u'\txmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
+            u'\txsi:schemaLocation="report.xsd">',
+            u"\t<course>",
+            u"\t\t" + form.cleaned_data["course_code"],
+            u"\t</course>",
+            u"\t<semester>",
+            u"\t\t" + form.cleaned_data["semester_code"],
+            u"\t</semester>",
+            u"\t<description>",
+            u"\t\t" + form.cleaned_data["description"],
+            u"\t</description>",
+            u"</report>",
         )
 
-        xml_file.write(u'\n'.join(text).encode('utf8'))
+        xml_file.write(u"\n".join(text).encode("utf8"))
         xml_file.close()
 
-        return navbar_render(request, 'report.html', {'messages': messages})
+        return navbar_render(request, "report.html", {"messages": messages})
     else:
-        return navbar_render(request, 'report.html')
+        return navbar_render(request, "report.html")
 
 
 def about(request):
-    return navbar_render(request, 'about.html')
+    return navbar_render(request, "about.html")
 
 
 def api(request):

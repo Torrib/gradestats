@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('grades', '0001_initial'),
-    ]
+    dependencies = [("grades", "0001_initial")]
 
     operations = [
         migrations.AddField(
-            model_name='grade',
-            name='digital_exam',
+            model_name="grade",
+            name="digital_exam",
             field=models.BooleanField(default=False),
-        ),
+        )
     ]
