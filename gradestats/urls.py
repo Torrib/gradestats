@@ -33,3 +33,16 @@ router.register('api/typeahead/course', CourseTypeaheadViewSet)
 
 urlpatterns += format_suffix_patterns(router.urls, allowed=['json'])
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if "grades_api_v2" in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r"^api/v2/", include("grades_api_v2.urls")),
+    ]
+
+if "rest_framework" in settings.INSTALLED_APPS:
+    from grades_api_v2.router import SharedAPIRootRouter
+
+    def api_urls():
+        return SharedAPIRootRouter.shared_router.urls
+
+    urlpatterns += [url(r"^api/v2/", include(api_urls()))]

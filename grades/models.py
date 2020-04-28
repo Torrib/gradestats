@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.db.models import ExpressionWrapper, F
 from django.db.models.signals import post_init
 from collections import OrderedDict
 from django.urls import reverse
@@ -29,7 +30,7 @@ class Course(models.Model):
     learning_goal = models.TextField()
 
     average = 0
-    
+
     def course_level(self):
         if self.study_level < 300:
             return 'Grunnleggende'
@@ -43,7 +44,7 @@ class Course(models.Model):
 
     def __unicode__(self):
         return self.code
-    
+
     def __str__(self):
         return self.code
 
@@ -52,10 +53,27 @@ class Course(models.Model):
         return reverse('course', kwargs={'course_code': self.code})
 
 
+class GradeManager(models.Manager):
+
+    def get_queryset(self):
+        return (
+            super()
+                .get_queryset()
+                .annotate(
+                attendee_count=ExpressionWrapper(
+                    F("a") + F("b") + F("c") + F("d") + F("e") + F("f"),
+                    output_field=models.IntegerField(),
+                )
+            )
+        )
+
+
 class Grade(models.Model):
+    objects = GradeManager()
+
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     semester_code = models.CharField("Semester", max_length=10)
-    
+
     average_grade = models.FloatField()
     digital_exam = models.BooleanField(default=False)
 
