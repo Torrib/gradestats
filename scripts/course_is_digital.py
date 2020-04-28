@@ -30,8 +30,8 @@ def requests_retry_session(
 URL_FORMAT_STRING = "https://www.ntnu.no/studier/emner/{}#tab=omEksamen"
 URL_COURSE_YEAR_FORMAT_STRING = "https://www.ntnu.no/studier/emner/{}/{}#tab=omEksamen"
 HTML_PARSER = (
-    "html5lib"
-)  # "html5lib" is external dependency, "html.parser" is python built-in
+    "html5lib"  # "html5lib" is external dependency, "html.parser" is python built-in
+)
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 6.0; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0"
 }
