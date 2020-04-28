@@ -33,7 +33,10 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'grades',
     'rest_framework',
-    'grades_api'
+    'grades_api',
+    'grades_api_v2',
+    'django_filters',
+    'watson',
 )
 
 MIDDLEWARE = (
@@ -52,7 +55,10 @@ WSGI_APPLICATION = 'gradestats.wsgi.application'
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
-    )
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 }
 
 DATABASES = {

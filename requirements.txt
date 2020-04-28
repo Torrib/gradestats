@@ -2,5 +2,11 @@ Django==3.0
 requests
 bs4
 html5lib
-djangorestframework
+djangorestframework==3.11.0
+drf-extensions==0.6.0
 psycopg2-binary==2.7.4
+openapi==1.1.0
+PyYAML==5.3.1
+uritemplate==3.0.1
+django-filter==2.2.0
+django-watson==1.5.5
