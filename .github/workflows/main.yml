@@ -33,7 +33,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run black
-        run: black grades grades_api grades_api_v2 gradestats scripts
+        run: black --check grades grades_api grades_api_v2 gradestats scripts
 
   check-migrations:
     runs-on: ubuntu-latest
@@ -50,4 +50,6 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Check migrations
+        env:
+          DJANGO_SETTINGS_MODULE: gradestats.settings.dev
         run: python manage.py makemigrations --check
