@@ -1,0 +1,53 @@
+name: Lint
+
+on: [push]
+
+jobs:
+  test-python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
+      - name: Install python dependencies
+        run: pip install -r requirements.txt
+
+
+  lint-black:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
+      - name: Install python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run black
+        run: black grades grades_api grades_api_v2 gradestats scripts
+
+  check-migrations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
+      - name: Install python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check migrations
+        run: python manage.py makemigrations --check
