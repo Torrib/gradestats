@@ -1,14 +1,16 @@
 from django.views.generic import TemplateView
 from rest_framework import viewsets, permissions, pagination
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.schemas import openapi
 from rest_framework.schemas.views import SchemaView
 from rest_framework.settings import api_settings
 from rest_framework_extensions.mixins import NestedViewSetMixin
 
-from grades.models import Course, Grade
+from grades.models import Course, Grade, Tag
 
 from .filters import CourseFilter, GradeFilter
-from .serializers import CourseSerializer, GradeSerializer
+from .serializers import CourseSerializer, GradeSerializer, TagSerializer
 
 
 class CourseViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
@@ -27,6 +29,14 @@ class GradeViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = pagination.LimitOffsetPagination
     filterset_class = GradeFilter
+
+
+class TagViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    lookup_field = "tag"
+    serializer_class = TagSerializer
+    queryset = Tag.objects.all()
+    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
+    pagination_class = pagination.LimitOffsetPagination
 
 
 class SwaggerUIView(TemplateView):

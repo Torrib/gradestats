@@ -40,9 +40,11 @@ INSTALLED_APPS = (
     "grades_api_v2",
     "django_filters",
     "watson",
+    "corsheaders",
 )
 
 MIDDLEWARE = (
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -80,3 +82,5 @@ SENTRY_DSN = os.environ.get("SENTRY_DSN", "")
 sentry_sdk.init(
     dsn=SENTRY_DSN, integrations=[DjangoIntegration()], send_default_pii=True
 )
+
+CORS_ORIGIN_ALLOW_ALL = True

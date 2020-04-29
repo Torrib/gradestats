@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from grades.models import Grade, Course
+from grades.models import Grade, Course, Tag
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -52,4 +52,15 @@ class GradeSerializer(serializers.ModelSerializer):
             "e",
             "f",
             "attendee_count",
+        )
+
+
+class TagSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="tag")
+
+    class Meta:
+        model = Tag
+        fields = (
+            "id",
+            "name",
         )

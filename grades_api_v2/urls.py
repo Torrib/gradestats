@@ -18,5 +18,11 @@ CourseGradesRouter = CoursesRouter.register(
     basename="course-grades",
     parents_query_lookups=["course__code"],
 )
+CourseTagsRouter = CoursesRouter.register(
+    "tags",
+    views.TagViewSet,
+    basename="course-tags",
+    parents_query_lookups=["courses__code"],
+)
 
 urlpatterns += router.urls
