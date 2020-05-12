@@ -23,5 +23,6 @@ class GradesAppConfig(AppConfig):
                 "content",
                 "learning_form",
                 "learning_goal",
+                "tag_set__tag",
             ),
         )

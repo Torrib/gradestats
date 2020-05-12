@@ -5,6 +5,7 @@ from grades.models import Grade, Course, Tag
 
 class CourseSerializer(serializers.ModelSerializer):
     course_level = serializers.CharField()
+    attendee_count = serializers.IntegerField()
 
     class Meta:
         model = Course
@@ -30,6 +31,9 @@ class CourseSerializer(serializers.ModelSerializer):
             "learning_form",
             "learning_goal",
             "course_level",
+            "average",
+            "watson_rank",
+            "attendee_count",
         )
 
 
