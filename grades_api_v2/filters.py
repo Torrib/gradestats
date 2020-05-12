@@ -32,6 +32,8 @@ class CourseFilter(filterset.FilterSet):
             "taught_in_english": ["exact"],
             "taught_from": ["exact", "lte", "gte"],
             "last_year_taught": ["exact", "lte", "gte"],
+            "average": ["exact", "lte", "gte"],
+            "attendee_count": ["exact", "lte", "gte"],
         }
 
 
