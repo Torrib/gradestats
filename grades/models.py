@@ -8,11 +8,22 @@ from django.urls import reverse
 
 class CourseManager(models.Manager):
     def get_queryset(self):
-        queryset = super().get_queryset().annotate(attendee_count=ExpressionWrapper(
-        F("grade__a") + F("grade__b") + F("grade__c") + F("grade__d") + F("grade__e") + F(
-            "grade__f") + F("grade__passed"),
-            output_field=models.IntegerField(),
-        ))
+        queryset = (
+            super()
+            .get_queryset()
+            .annotate(
+                attendee_count=ExpressionWrapper(
+                    F("grade__a")
+                    + F("grade__b")
+                    + F("grade__c")
+                    + F("grade__d")
+                    + F("grade__e")
+                    + F("grade__f")
+                    + F("grade__passed"),
+                    output_field=models.IntegerField(),
+                )
+            )
+        )
         return queryset
 
 
