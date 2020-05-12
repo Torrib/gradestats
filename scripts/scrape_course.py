@@ -24,7 +24,7 @@ def requests_retry_session(
     return session
 
 
-def getCourseData(code, faculty):
+def get_course_data(code, faculty):
     tia_url = "https://api.ntnu.no/rest/v4/emne/emnekode/194_"
     base_url_no = "https://www.ntnu.no/studier/emner/" + code
     data_no = requests_retry_session(session=s).get(url=base_url_no)

@@ -5,7 +5,7 @@ import getpass
 import django
 from bs4 import BeautifulSoup
 import requests
-from scripts.scrapeCourse import getCourseData
+from scripts.scrape_course import get_course_data
 from scripts.course_is_digital import (
     course_has_digital_exam_semester,
     course_has_digital_exam,
@@ -53,7 +53,7 @@ def login(username, password):
 
 
 def create_course(code, faculty):
-    resp = getCourseData(code, faculty)
+    resp = get_course_data(code, faculty)
     if not resp:
         return None
     data = json.loads(resp)

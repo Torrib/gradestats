@@ -185,6 +185,40 @@ Beskrivelse:
         ordering = ("-created_date",)
 
 
+class InstitutionalUnit(models.Model):
+    key = models.IntegerField("Nøkkel", unique=True, help_text="Nøkkel fra Karstat")
+    norwegian_name = models.CharField("Norsk navn", max_length=256, default="")
+    english_name = models.CharField("Engelsk navn", max_length=256, default="")
+    short_name = models.CharField("Forkortelse", max_length=32, default="")
+
+    def __str__(self):
+        return self.norwegian_name
+
+    class Meta:
+        abstract = True
+
+
+class Faculty(InstitutionalUnit):
+    class Meta:
+        verbose_name = "Fakultet"
+        verbose_name_plural = "Fakulteter"
+        ordering = ("key",)
+
+
+class Department(InstitutionalUnit):
+    faculty = models.ForeignKey(
+        to=Faculty, related_name="departments", on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return self.norwegian_name
+
+    class Meta:
+        verbose_name = "Institutt"
+        verbose_name_plural = "Institutter"
+        ordering = ("key",)
+
+
 class NavbarItems(object):
     @staticmethod
     def get_items():
