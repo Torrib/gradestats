@@ -4,7 +4,6 @@ from .models import Course
 
 
 class CourseSearchAdapter(SearchAdapter):
-
     def get_title(self, course: Course):
         """
         Returns the title of this search result. This is given high priority in search result ranking.

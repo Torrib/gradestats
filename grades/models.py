@@ -102,7 +102,7 @@ class Grade(models.Model):
         return self.a + self.b + self.c + self.d + self.e + self.f
 
     class Meta:
-        default_manager_name = 'objects'
+        default_manager_name = "objects"
 
 
 class Tag(models.Model):
