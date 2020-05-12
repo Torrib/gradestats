@@ -6,9 +6,11 @@ from grades.models import Course, Grade
 
 class WatsonFilter(filters.CharFilter):
     def filter(self, queryset, value):
-        if value and value != "":
-            queryset = watson_search.filter(queryset, value)
-        return queryset
+        value = value if value else ""
+        filtered_queryset = watson_search.filter(queryset, value)
+        if not filtered_queryset.exists() and len(value) <= 2:
+            return queryset
+        return filtered_queryset
 
 
 class CourseFilter(filterset.FilterSet):

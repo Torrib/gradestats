@@ -8,7 +8,11 @@ from django.urls import reverse
 
 class CourseManager(models.Manager):
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = (
+            super()
+            .get_queryset()
+            .annotate(watson_rank=models.Value(1.0, output_field=models.FloatField()))
+        )
         return queryset.distinct()
 
 

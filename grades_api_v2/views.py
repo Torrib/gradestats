@@ -20,7 +20,13 @@ class CourseViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = pagination.LimitOffsetPagination
     filterset_class = CourseFilter
-    ordering_fields = ("watson_rank", "attendee_count")
+    ordering_fields = (
+        "watson_rank",
+        "norwegian_name",
+        "short_name",
+        "code",
+        "english_name",
+    )
 
 
 class GradeViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
