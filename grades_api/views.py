@@ -25,14 +25,14 @@ class GradeViewSet(viewsets.ReadOnlyModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         course = get_object_or_404(Course, code=kwargs["course_code"].upper())
         grade = get_object_or_404(
-            course.grade_set, semester_code=kwargs["semester_code"].upper()
+            course.grades, semester_code=kwargs["semester_code"].upper()
         )
         serializer = GradeSerializer(grade)
         return Response(serializer.data)
 
     def list(self, request, *args, **kwargs):
         course = get_object_or_404(Course, code=kwargs["course_code"].upper())
-        grades = course.grade_set.all()
+        grades = course.grades.all()
         serializer = GradeSerializer(grades, many=True)
         return Response(serializer.data)
 

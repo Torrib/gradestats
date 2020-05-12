@@ -8,23 +8,8 @@ from django.urls import reverse
 
 class CourseManager(models.Manager):
     def get_queryset(self):
-        queryset = (
-            super()
-            .get_queryset()
-            .annotate(
-                attendee_count=ExpressionWrapper(
-                    F("grade__a")
-                    + F("grade__b")
-                    + F("grade__c")
-                    + F("grade__d")
-                    + F("grade__e")
-                    + F("grade__f")
-                    + F("grade__passed"),
-                    output_field=models.IntegerField(),
-                )
-            )
-        )
-        return queryset
+        queryset = super().get_queryset()
+        return queryset.distinct()
 
 
 class Course(models.Model):
@@ -54,6 +39,7 @@ class Course(models.Model):
 
     average = 0
     watson_rank = 0.0
+    attendee_count = 0
 
     def course_level(self):
         if self.study_level < 300:
@@ -77,6 +63,8 @@ class Course(models.Model):
 
 
 class GradeManager(models.Manager):
+    use_for_related_fields = True
+
     def get_queryset(self):
         return (
             super()
@@ -93,7 +81,7 @@ class GradeManager(models.Manager):
 class Grade(models.Model):
     objects = GradeManager()
 
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, related_name="grades", on_delete=models.CASCADE)
     semester_code = models.CharField("Semester", max_length=10)
 
     average_grade = models.FloatField()
@@ -113,9 +101,12 @@ class Grade(models.Model):
     def get_num_attendees(self):
         return self.a + self.b + self.c + self.d + self.e + self.f
 
+    class Meta:
+        default_manager_name = 'objects'
+
 
 class Tag(models.Model):
-    courses = models.ManyToManyField(Course)
+    courses = models.ManyToManyField(Course, related_name="tags")
     tag = models.CharField("Tag text", max_length=32)
 
     def __unicode__(self):
@@ -153,7 +144,7 @@ class Faculties(object):
 
 def get_average_grade(**kwargs):
     course = kwargs.get("instance")
-    grades = course.grade_set.all()
+    grades = course.grades.all()
     course.average = 0
     attendees = 0
     for grade in grades:
