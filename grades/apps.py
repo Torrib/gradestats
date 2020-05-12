@@ -7,9 +7,11 @@ class GradesAppConfig(AppConfig):
 
     def ready(self):
         Course = self.get_model("Course")
+        from .search_adapters import CourseSearchAdapter
 
         watson.register(
             Course,
+            CourseSearchAdapter,
             fields=(
                 "norwegian_name",
                 "short_name",
@@ -23,6 +25,6 @@ class GradesAppConfig(AppConfig):
                 "content",
                 "learning_form",
                 "learning_goal",
-                "tag_set__tag",
+                "tags__tag",
             ),
         )
