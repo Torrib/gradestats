@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 from django.db import models
 from django.db.models import ExpressionWrapper, F
-from django.db.models.signals import post_init
 from collections import OrderedDict
 from django.urls import reverse
 
@@ -41,9 +39,10 @@ class Course(models.Model):
     learning_form = models.TextField()
     learning_goal = models.TextField()
 
-    average = 0
+    average = models.FloatField(default=0)
+    attendee_count = models.IntegerField(default=0)
+
     watson_rank = 0.0
-    attendee_count = 0
 
     def course_level(self):
         if self.study_level < 300:
@@ -144,21 +143,3 @@ class Faculties(object):
         faculties["66"] = u"(NV) Fakultet for naturvitenskap"
         faculties["67"] = u"(SU) Fakultet for samfunns- og utdanningsvitenskap"
         return faculties
-
-
-def get_average_grade(**kwargs):
-    course = kwargs.get("instance")
-    grades = course.grades.all()
-    course.average = 0
-    attendees = 0
-    for grade in grades:
-        attendees += grade.get_num_attendees()
-        course.average += grade.average_grade * grade.get_num_attendees()
-    if attendees == 0:
-        return
-    else:
-        course.average /= attendees
-        return
-
-
-post_init.connect(get_average_grade, Course)

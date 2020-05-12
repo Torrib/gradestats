@@ -26,6 +26,8 @@ class CourseViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         "short_name",
         "code",
         "english_name",
+        "average",
+        "attendee_count",
     )
 
 
