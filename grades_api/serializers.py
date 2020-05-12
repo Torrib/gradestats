@@ -41,7 +41,7 @@ class CourseSerializer(serializers.ModelSerializer):
             "exam_type",
             "grade_type",
             "place",
-            "have_had_digital_exam",
+            "has_had_digital_exam",
         )
 
 

@@ -26,7 +26,7 @@ class Course(models.Model):
     exam_type = models.CharField("Exam Type", max_length=255, default="")
     grade_type = models.CharField("Grade Type", max_length=255, default="")
     place = models.CharField("Place", max_length=255, default="")
-    have_had_digital_exam = models.BooleanField(default=False)
+    has_had_digital_exam = models.BooleanField(default=False)
 
     english_name = models.CharField("English name", max_length=255)
     credit = models.FloatField("Credit", default=7.5)

@@ -84,7 +84,7 @@ def create_course(code, faculty):
             if info["code"] == u"MÅL" and "text" in info:
                 course.learning_goal = info["text"]
     course.faculty_code = faculty
-    course.have_had_digital_exam = course_has_digital_exam(code)
+    course.has_had_digital_exam = course_has_digital_exam(code)
     course.exam_type = data["course"]["examType"]
     course.grade_type = data["course"]["gradeType"]
     course.place = data["course"]["place"]

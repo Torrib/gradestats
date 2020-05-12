@@ -4,8 +4,8 @@ from grades.models import *
 
 
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ("code", "place", "have_had_digital_exam", "exam_type", "grade_type")
-    list_filter = ("place", "have_had_digital_exam", "exam_type", "grade_type")
+    list_display = ("code", "place", "has_had_digital_exam", "exam_type", "grade_type")
+    list_filter = ("place", "has_had_digital_exam", "exam_type", "grade_type")
     search_fields = ["code"]
     model = Course
 
