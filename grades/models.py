@@ -6,7 +6,30 @@ from collections import OrderedDict
 from django.urls import reverse
 
 
+class CourseManager(models.Manager):
+    def get_queryset(self):
+        queryset = (
+            super()
+            .get_queryset()
+            .annotate(
+                attendee_count=ExpressionWrapper(
+                    F("grade__a")
+                    + F("grade__b")
+                    + F("grade__c")
+                    + F("grade__d")
+                    + F("grade__e")
+                    + F("grade__f")
+                    + F("grade__passed"),
+                    output_field=models.IntegerField(),
+                )
+            )
+        )
+        return queryset
+
+
 class Course(models.Model):
+    objects = CourseManager()
+
     norwegian_name = models.CharField("Norwegian Name", max_length=255)
     short_name = models.CharField("Short name", max_length=50)
     code = models.CharField("Code", max_length=15)
@@ -30,6 +53,7 @@ class Course(models.Model):
     learning_goal = models.TextField()
 
     average = 0
+    watson_rank = 0.0
 
     def course_level(self):
         if self.study_level < 300:
@@ -59,7 +83,7 @@ class GradeManager(models.Manager):
             .get_queryset()
             .annotate(
                 attendee_count=ExpressionWrapper(
-                    F("a") + F("b") + F("c") + F("d") + F("e") + F("f"),
+                    F("a") + F("b") + F("c") + F("d") + F("e") + F("f") + F("passed"),
                     output_field=models.IntegerField(),
                 )
             )
