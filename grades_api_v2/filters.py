@@ -24,7 +24,7 @@ class CourseFilter(filterset.FilterSet):
             "exam_type": ["exact"],
             "grade_type": ["exact"],
             "place": ["exact"],
-            "have_had_digital_exam": ["exact"],
+            "has_had_digital_exam": ["exact"],
             "credit": ["exact", "lte", "gte"],
             "study_level": ["exact"],
             "taught_in_spring": ["exact"],
