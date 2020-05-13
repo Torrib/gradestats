@@ -3,6 +3,7 @@ from django.contrib import admin
 from grades.models import *
 
 
+@admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
     list_display = ("code", "place", "has_had_digital_exam", "exam_type", "grade_type")
     list_filter = ("place", "has_had_digital_exam", "exam_type", "grade_type")
@@ -10,6 +11,7 @@ class CourseAdmin(admin.ModelAdmin):
     model = Course
 
 
+@admin.register(Grade)
 class GradeAdmin(admin.ModelAdmin):
     search_fields = ["course__code"]
     list_filter = ("semester_code", "digital_exam")
@@ -17,6 +19,7 @@ class GradeAdmin(admin.ModelAdmin):
     model = Grade
 
 
+@admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = ("tag", "course_list")
     model = Tag
@@ -25,6 +28,8 @@ class TagAdmin(admin.ModelAdmin):
         return ", ".join([c.code for c in obj.courses.all()])
 
 
-admin.site.register(Course, CourseAdmin)
-admin.site.register(Grade, GradeAdmin)
-admin.site.register(Tag, TagAdmin)
+@admin.register(Report)
+class ReportAdmin(admin.ModelAdmin):
+    search_fields = ["course__code"]
+    list_display = ("course", "contact_email", "created_date")
+    model = Report

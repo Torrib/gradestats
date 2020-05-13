@@ -101,6 +101,9 @@ class Grade(models.Model):
     def __unicode__(self):
         return self.semester_code
 
+    def __str__(self):
+        return self.semester_code
+
     def get_num_attendees(self):
         return self.a + self.b + self.c + self.d + self.e + self.f
 
@@ -114,6 +117,49 @@ class Tag(models.Model):
 
     def __unicode__(self):
         return self.tag
+
+    def __str__(self):
+        return self.tag
+
+
+class Report(models.Model):
+    created_date = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(default="")
+    course = models.ForeignKey(
+        to=Course,
+        related_name="reports",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    contact_email = models.EmailField(null=True, blank=True)
+
+    @property
+    def subject(self):
+        if self.course:
+            return f"Ny rapport i emnet {self.course.code} fra grades.no"
+        return f"Ny rapport fra grades.no"
+
+    @property
+    def email_description(self):
+        description_text = f"""
+{self.contact_email if self.contact_email else "En anonym bruker"} har sendt inn en feilrapport for grades.no.
+
+Emne: {self.course.code if self.course else "Ikke oppgitt"}.
+
+Beskrivelse:
+{self.description}
+
+        """
+        return description_text
+
+    def __str__(self):
+        if self.course:
+            return f"{self.created_date} - {self.course.code}"
+        return f"{self.course.code}"
+
+    class Meta:
+        ordering = ("-created_date",)
 
 
 class NavbarItems(object):
@@ -134,12 +180,12 @@ class Faculties(object):
     @staticmethod
     def get_faculties():
         faculties = dict()
-        faculties["60"] = u"(ØK) Fakultet for økonomi"
-        faculties["61"] = u"(AD) Fakultet for arkitektur og design"
-        faculties["62"] = u"(HF) Det humanistiske fakultet"
-        faculties["63"] = u"(IE) Fakultet for informasjonsteknologi og elektroteknikk "
-        faculties["64"] = u"(IV) Fakultet for ingeniørvitenskap"
-        faculties["65"] = u"(MH) Fakultet for medisin og helsevitenskap"
-        faculties["66"] = u"(NV) Fakultet for naturvitenskap"
-        faculties["67"] = u"(SU) Fakultet for samfunns- og utdanningsvitenskap"
+        faculties["60"] = "(ØK) Fakultet for økonomi"
+        faculties["61"] = "(AD) Fakultet for arkitektur og design"
+        faculties["62"] = "(HF) Det humanistiske fakultet"
+        faculties["63"] = "(IE) Fakultet for informasjonsteknologi og elektroteknikk "
+        faculties["64"] = "(IV) Fakultet for ingeniørvitenskap"
+        faculties["65"] = "(MH) Fakultet for medisin og helsevitenskap"
+        faculties["66"] = "(NV) Fakultet for naturvitenskap"
+        faculties["67"] = "(SU) Fakultet for samfunns- og utdanningsvitenskap"
         return faculties

@@ -1,4 +1,7 @@
-from .models import Course
+from django.core.mail import send_mail
+from django.conf import settings
+
+from .models import Course, Report
 
 
 def calculate_average_grade(course: Course):
@@ -32,3 +35,13 @@ def update_course_stats(course: Course):
     course.attendee_count = attendee_count
 
     course.save()
+
+
+def send_report(report: Report):
+    send_mail(
+        subject=report.subject,
+        message=report.email_description,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[settings.REPORTS_EMAIL],
+        fail_silently=False,
+    )
