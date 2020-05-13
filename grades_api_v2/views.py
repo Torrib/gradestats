@@ -1,16 +1,20 @@
 from django.views.generic import TemplateView
 from rest_framework import viewsets, permissions, pagination
-from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.schemas import openapi
 from rest_framework.schemas.views import SchemaView
 from rest_framework.settings import api_settings
 from rest_framework_extensions.mixins import NestedViewSetMixin
 
-from grades.models import Course, Grade, Tag
+from grades.models import Course, Grade, Tag, Report
 
 from .filters import CourseFilter, GradeFilter
-from .serializers import CourseSerializer, GradeSerializer, TagSerializer
+from .permissions import DjangoModelPermissionOrAnonCreateOnly
+from .serializers import (
+    CourseSerializer,
+    GradeSerializer,
+    TagSerializer,
+    ReportSerializer,
+)
 
 
 class CourseViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
@@ -45,6 +49,13 @@ class TagViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
+    pagination_class = pagination.LimitOffsetPagination
+
+
+class ReportViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    serializer_class = ReportSerializer
+    queryset = Report.objects.all()
+    permission_classes = (DjangoModelPermissionOrAnonCreateOnly,)
     pagination_class = pagination.LimitOffsetPagination
 
 

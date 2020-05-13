@@ -6,6 +6,8 @@ class GradesAppConfig(AppConfig):
     name = "grades"
 
     def ready(self):
+        from . import signals  # noqa # pylint: disable=unused-import
+
         Course = self.get_model("Course")
         from .search_adapters import CourseSearchAdapter
 

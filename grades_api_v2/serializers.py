@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from grades.models import Grade, Course, Tag
+from grades.models import Grade, Course, Tag, Report
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -68,3 +68,14 @@ class TagSerializer(serializers.ModelSerializer):
             "id",
             "name",
         )
+
+
+class ReportSerializer(serializers.ModelSerializer):
+    course = serializers.SlugRelatedField(
+        queryset=Course.objects.all(), allow_null=True, slug_field="code",
+    )
+
+    class Meta:
+        model = Report
+        fields = ("id", "created_date", "description", "course", "contact_email")
+        read_only_fields = ("created_date",)

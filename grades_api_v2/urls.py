@@ -24,5 +24,6 @@ CourseTagsRouter = CoursesRouter.register(
     basename="course-tags",
     parents_query_lookups=["courses__code"],
 )
+ReportRouter = router.register("reports", views.ReportViewSet, basename="reports")
 
 urlpatterns += router.urls
