@@ -13,3 +13,4 @@ django-watson==1.5.5
 black==19.10b0
 sentry-sdk==0.14.3
 django-cors-headers==3.2.1
+mozilla-django-oidc==1.2.3
