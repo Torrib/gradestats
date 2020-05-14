@@ -5,15 +5,19 @@ from rest_framework.schemas.views import SchemaView
 from rest_framework.settings import api_settings
 from rest_framework_extensions.mixins import NestedViewSetMixin
 
-from grades.models import Course, Grade, Tag, Report
+from grades.models import Course, Grade, Tag, Report, CourseTag
 
 from .filters import CourseFilter, GradeFilter
-from .permissions import DjangoModelPermissionOrAnonCreateOnly
+from .permissions import (
+    DjangoModelPermissionOrAnonCreateOnly,
+    IsAuthenticatedOrReadOnlyOrIsAdminUserOrOwnerEdit,
+)
 from .serializers import (
     CourseSerializer,
     GradeSerializer,
     TagSerializer,
     ReportSerializer,
+    CourseTagSerializer,
 )
 
 
@@ -42,6 +46,18 @@ class GradeViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = pagination.LimitOffsetPagination
     filterset_class = GradeFilter
+
+
+class CourseTagViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    lookup_field = "tag__tag"
+    serializer_class = CourseTagSerializer
+    queryset = CourseTag.objects.all()
+    permission_classes = (IsAuthenticatedOrReadOnlyOrIsAdminUserOrOwnerEdit,)
+    pagination_class = pagination.LimitOffsetPagination
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(created_by=user)
 
 
 class TagViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
