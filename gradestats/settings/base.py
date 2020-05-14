@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "mozilla_django_oidc",
     "grades",
     "rest_framework",
     "grades_api",
@@ -51,6 +52,12 @@ MIDDLEWARE = (
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "mozilla_django_oidc.middleware.SessionRefresh",
+)
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "mozilla_django_oidc.auth.OIDCAuthenticationBackend",
 )
 
 ROOT_URLCONF = "gradestats.urls"
@@ -62,6 +69,9 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": (
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.OrderingFilter",
+    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "mozilla_django_oidc.contrib.drf.OIDCAuthentication",
     ),
 }
 
@@ -96,3 +106,10 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 EMAIL_PORT = 587
 
 REPORTS_EMAIL = os.environ.get("REPORTS_EMAIL", "")
+
+OIDC_RP_CLIENT_ID = os.environ.get("OIDC_RP_CLIENT_ID")
+OIDC_RP_CLIENT_SECRET = os.environ.get("OIDC_RP_CLIENT_SECRET")
+OIDC_OP_AUTHORIZATION_ENDPOINT = os.environ.get("OIDC_OP_AUTHORIZATION_ENDPOINT")
+OIDC_OP_TOKEN_ENDPOINT = os.environ.get("OIDC_OP_TOKEN_ENDPOINT")
+OIDC_OP_USER_ENDPOINT = os.environ.get("OIDC_OP_USER_ENDPOINT")
+OIDC_RP_SCOPES = "profile userid userid-feide groups openid email"
