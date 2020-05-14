@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from grades.models import Grade, Course, Tag, Report
+from grades.models import Grade, Course, Tag, Report, CourseTag
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -59,14 +59,42 @@ class GradeSerializer(serializers.ModelSerializer):
         )
 
 
+class CourseTagSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="tag.tag")
+    course = serializers.SlugRelatedField(
+        queryset=Course.objects.all(), slug_field="code",
+    )
+
+    def create(self, validated_data):
+        """
+        Handle tag creation manually because a tag by the given name may already exists.
+        """
+        name = validated_data.pop("tag").pop("tag")
+        tag, created = Tag.objects.get_or_create(tag=name)
+        validated_data.update(tag=tag)
+        return super().create(validated_data)
+
+    class Meta:
+        model = CourseTag
+        fields = (
+            "id",
+            "name",
+            "course",
+        )
+
+
 class TagSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="tag")
+    courses = serializers.SlugRelatedField(
+        queryset=Course.objects.all(), slug_field="code", many=True
+    )
 
     class Meta:
         model = Tag
         fields = (
             "id",
             "name",
+            "courses",
         )
 
 

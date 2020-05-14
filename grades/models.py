@@ -1,7 +1,11 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import ExpressionWrapper, F
 from collections import OrderedDict
 from django.urls import reverse
+
+
+User = get_user_model()
 
 
 class CourseManager(models.Manager):
@@ -112,7 +116,7 @@ class Grade(models.Model):
 
 
 class Tag(models.Model):
-    courses = models.ManyToManyField(Course, related_name="tags")
+    courses = models.ManyToManyField(Course, related_name="tags", through="CourseTag")
     tag = models.CharField("Tag text", max_length=32)
 
     def __unicode__(self):
@@ -120,6 +124,25 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.tag
+
+
+class CourseTag(models.Model):
+    course = models.ForeignKey(
+        to=Course, related_name="course_tags", on_delete=models.CASCADE
+    )
+    tag = models.ForeignKey(
+        to=Tag, related_name="course_tags", on_delete=models.CASCADE
+    )
+    created_by = models.ForeignKey(
+        to=User,
+        related_name="created_tags",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=False,
+    )
+
+    class Meta:
+        unique_together = (("course", "tag",),)
 
 
 class Report(models.Model):

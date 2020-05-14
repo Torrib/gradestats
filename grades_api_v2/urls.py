@@ -20,10 +20,11 @@ CourseGradesRouter = CoursesRouter.register(
 )
 CourseTagsRouter = CoursesRouter.register(
     "tags",
-    views.TagViewSet,
+    views.CourseTagViewSet,
     basename="course-tags",
-    parents_query_lookups=["courses__code"],
+    parents_query_lookups=["course__code"],
 )
+TagRouter = router.register("tags", views.TagViewSet, basename="tags")
 ReportRouter = router.register("reports", views.ReportViewSet, basename="reports")
 
 urlpatterns += router.urls
