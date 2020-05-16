@@ -1,11 +1,16 @@
 from django.views.generic import TemplateView
-from rest_framework import viewsets, permissions, pagination
+from rest_framework import viewsets, permissions, pagination, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.schemas import openapi
 from rest_framework.schemas.views import SchemaView
 from rest_framework.settings import api_settings
 from rest_framework_extensions.mixins import NestedViewSetMixin
 
-from grades.models import Course, Grade, Tag, Report, CourseTag
+from clients.course_pages import CoursePagesClient
+from clients.karstat import KarstatGradeClient
+from clients.tia import TIACourseClient, TIADepartmentClient, TIAFacultyClient
+from grades.models import Course, Grade, Tag, Report, CourseTag, Faculty, Department
 
 from .filters import CourseFilter, GradeFilter
 from .permissions import (
@@ -18,6 +23,10 @@ from .serializers import (
     TagSerializer,
     ReportSerializer,
     CourseTagSerializer,
+    FacultySerializer,
+    DepartmentSerializer,
+    TIAObjectListRefreshSerializer,
+    KarstatGradeReportSerializer,
 )
 
 
@@ -37,6 +46,20 @@ class CourseViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         "average",
         "attendee_count",
     )
+
+    @action(
+        url_path="refresh-course-pages",
+        detail=True,
+        methods=["POST"],
+        permission_classes=(permissions.IsAdminUser,),
+    )
+    def refresh_course_pages(self, request, *args, **kwargs):
+        course = self.get_object()
+        client = CoursePagesClient()
+        client.update_course(course_code=course.code)
+        course.refresh_from_db()
+        serializer = self.get_serializer(instance=course)
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
 class GradeViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
@@ -73,6 +96,96 @@ class ReportViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = Report.objects.all()
     permission_classes = (DjangoModelPermissionOrAnonCreateOnly,)
     pagination_class = pagination.LimitOffsetPagination
+
+
+class FacultyViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    serializer_class = FacultySerializer
+    queryset = Faculty.objects.all()
+    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
+    pagination_class = pagination.LimitOffsetPagination
+
+
+class DepartmentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    serializer_class = DepartmentSerializer
+    queryset = Department.objects.all()
+    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
+    pagination_class = pagination.LimitOffsetPagination
+
+
+def scrape_list_refresh_action(url_path: str):
+    return action(
+        url_path=url_path,
+        detail=False,
+        methods=["POST"],
+        serializer_class=TIAObjectListRefreshSerializer,
+        permission_classes=(permissions.IsAdminUser,),
+    )
+
+
+class TIAScraperViewSet(viewsets.GenericViewSet):
+    def _refresh_object_list(
+        self, request, object_serializer_class, scraper_client_class
+    ):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.data
+        client = scraper_client_class()
+        client.login(
+            username=data.get("username"), password=data.get("password"),
+        )
+        objects = client.refresh_objects(
+            limit=data.get("limit"), skip=data.get("skip"),
+        )
+        objects_serializer = object_serializer_class(instance=objects, many=True)
+        return Response(status=status.HTTP_200_OK, data=objects_serializer.data)
+
+    @scrape_list_refresh_action(url_path="refresh-courses")
+    def refresh_courses(self, request, *args, **kwargs):
+        return self._refresh_object_list(
+            request,
+            object_serializer_class=CourseSerializer,
+            scraper_client_class=TIACourseClient,
+        )
+
+    @scrape_list_refresh_action(url_path="refresh-faculties")
+    def refresh_faculties(self, request, *args, **kwargs):
+        return self._refresh_object_list(
+            request,
+            object_serializer_class=FacultySerializer,
+            scraper_client_class=TIAFacultyClient,
+        )
+
+    @scrape_list_refresh_action(url_path="refresh-departments")
+    def refresh_departments(self, request, *args, **kwargs):
+        return self._refresh_object_list(
+            request,
+            object_serializer_class=DepartmentSerializer,
+            scraper_client_class=TIADepartmentClient,
+        )
+
+
+class KarstatScraperViewSet(viewsets.GenericViewSet):
+    @action(
+        url_path="grade-report",
+        detail=False,
+        methods=["POST"],
+        serializer_class=KarstatGradeReportSerializer,
+        permission_classes=(permissions.IsAdminUser,),
+    )
+    def grade_report(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.data
+        department = Department.objects.get(pk=data.get("department"))
+        client = KarstatGradeClient()
+        client.login(
+            username=data.get("username"), password=data.get("password"),
+        )
+        grades = client.update_grade_stats(
+            department=department, year=data.get("year"), semester=data.get("semester"),
+        )
+        grades_serializer = GradeSerializer(instance=grades, many=True)
+        return Response(status=status.HTTP_200_OK, data=grades_serializer.data)
 
 
 class SwaggerUIView(TemplateView):
