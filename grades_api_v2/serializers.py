@@ -43,6 +43,7 @@ class CourseSerializer(serializers.ModelSerializer):
             "average",
             "watson_rank",
             "attendee_count",
+            "department",
         )
 
 

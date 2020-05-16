@@ -51,7 +51,7 @@ class CourseViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         url_path="refresh-course-pages",
         detail=True,
         methods=["POST"],
-        permission_classes=(permissions.AllowAny,),
+        permission_classes=(permissions.IsAdminUser,),
     )
     def refresh_course_pages(self, request, *args, **kwargs):
         course = self.get_object()
