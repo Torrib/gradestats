@@ -18,7 +18,9 @@ class FeideClient:
         return BeautifulSoup(page_text, "html5lib")
 
     def login(self, username: str, password: str):
-        login_form_data = dict(feidename=username, password=password, org="ntnu.no", asLen="255")
+        login_form_data = dict(
+            feidename=username, password=password, org="ntnu.no", asLen="255"
+        )
         feide_sso_page = self.session.get(self.init_login_url)
 
         sso_page_soup = self.init_soup(feide_sso_page.text)
@@ -36,9 +38,7 @@ class FeideClient:
         saml_response_input = login_response_soup.find(
             "input", {"name": "SAMLResponse"}
         )
-        relay_state_input = login_response_soup.find(
-            "input", {"name": "RelayState"}
-        )
+        relay_state_input = login_response_soup.find("input", {"name": "RelayState"})
 
         sso_confirm_data = {
             "SAMLResponse": saml_response_input.get("value"),

@@ -33,7 +33,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run black
-        run: black --check grades grades_api grades_api_v2 gradestats scripts
+        run: black --check grades grades_api grades_api_v2 gradestats scripts clients
 
   check-migrations:
     runs-on: ubuntu-latest

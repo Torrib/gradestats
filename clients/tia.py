@@ -82,7 +82,7 @@ class TIAClient(FeideClient):
 
 class TIACourseClient(TIAClient):
     model = Course
-    pk_field = 'code'
+    pk_field = "code"
     resource_name = "emne"
 
     @staticmethod
@@ -95,9 +95,7 @@ class TIACourseClient(TIAClient):
         return f"{self.base_url}/emne/emnekode/{object_id}"
 
     def get_list_url(self, limit: int, skip: int):
-        return f"{self.base_url}/emne" \
-               f"?limit={limit}" \
-               f"&skip={skip}" \
+        return f"{self.base_url}/emne" f"?limit={limit}" f"&skip={skip}"
 
     def parse_term_code(self, term_code: str) -> [str, int]:
         """
@@ -105,11 +103,11 @@ class TIACourseClient(TIAClient):
         :return: (semester, year) e.g ('V', 2004)
         """
         semester_lookup = {
-            "VÅR": 'V',
-            "SOM": 'S',
-            "HØST": 'H',
+            "VÅR": "V",
+            "SOM": "S",
+            "HØST": "H",
         }
-        search_pattern = re.compile(r'(?P<year>\d{4})_(?P<semester>VÅR|SOM|HØST)')
+        search_pattern = re.compile(r"(?P<year>\d{4})_(?P<semester>VÅR|SOM|HØST)")
         results = search_pattern.match(term_code).groupdict()
         semester = results.get("semester")
         year = results.get("year")
@@ -137,17 +135,23 @@ class TIACourseClient(TIAClient):
         english_name = course_names.get("navn_eng")
 
         roles = course_data.get("roles")
-        taught_from_semester, taught_from_year = self.resolve_course_role(roles, "forste_eksamen")
-        last_year_taught_semester, last_year_taught_year = self.resolve_course_role(roles, "siste_eksamen")
+        taught_from_semester, taught_from_year = self.resolve_course_role(
+            roles, "forste_eksamen"
+        )
+        last_year_taught_semester, last_year_taught_year = self.resolve_course_role(
+            roles, "siste_eksamen"
+        )
 
-        data.update({
-            "code": code,
-            "norwegian_name": norwegian_name,
-            "english_name": english_name,
-            "credit": credit,
-            "taught_from": taught_from_year,
-            "last_year_taught": last_year_taught_year,
-        })
+        data.update(
+            {
+                "code": code,
+                "norwegian_name": norwegian_name,
+                "english_name": english_name,
+                "credit": credit,
+                "taught_from": taught_from_year,
+                "last_year_taught": last_year_taught_year,
+            }
+        )
 
         return data
 
@@ -155,16 +159,18 @@ class TIACourseClient(TIAClient):
 class TIAOrganizationUnitClient(TIAClient):
     organization_type = None
     resource_name = "organisasjon"
-    pk_field = 'organization_unit_id'
+    pk_field = "organization_unit_id"
 
     def get_detail_url(self, object_id: int):
         return f"{self.base_url}/organisasjon/ouid/{object_id}"
 
     def get_list_url(self, limit: int, skip: int):
-        return f"{self.base_url}/organisasjon" \
-               f"?limit={limit}" \
-               f"&skip={skip}" \
-               f"&filter=orgreg2_org.ouCategory={self.organization_type}"
+        return (
+            f"{self.base_url}/organisasjon"
+            f"?limit={limit}"
+            f"&skip={skip}"
+            f"&filter=orgreg2_org.ouCategory={self.organization_type}"
+        )
 
     def resolve_data_for_object(self, organization: dict):
         data = super().resolve_data_for_object(organization)
@@ -182,13 +188,15 @@ class TIAOrganizationUnitClient(TIAClient):
         organization_unit_id = orgreg2_org.get("ouId")
         nsd_code = orgreg2_org.get("nsdCodes")[0]
 
-        data.update({
-            "acronym": acronym,
-            "norwegian_name": norwegian_name,
-            "english_name": english_name,
-            "organization_unit_id": organization_unit_id,
-            "nsd_code": nsd_code,
-        })
+        data.update(
+            {
+                "acronym": acronym,
+                "norwegian_name": norwegian_name,
+                "english_name": english_name,
+                "organization_unit_id": organization_unit_id,
+                "nsd_code": nsd_code,
+            }
+        )
         return data
 
     class Meta:
@@ -205,9 +213,9 @@ class TIAFacultyClient(TIAOrganizationUnitClient):
         orgreg2_org = organization.get("orgreg2_org")
         faculty_id = orgreg2_org.get("facNr")
 
-        organization_data.update({
-            "faculty_id": faculty_id,
-        })
+        organization_data.update(
+            {"faculty_id": faculty_id,}
+        )
 
         return organization_data
 
@@ -225,9 +233,11 @@ class TIADepartmentClient(TIAOrganizationUnitClient):
 
         faculty = Faculty.objects.filter(faculty_id=faculty_id).first()
 
-        organization_data.update({
-            "department_id": department_id,
-            "faculty_id": faculty.id if faculty else None
-        })
+        organization_data.update(
+            {
+                "department_id": department_id,
+                "faculty_id": faculty.id if faculty else None,
+            }
+        )
 
         return organization_data
