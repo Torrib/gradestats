@@ -46,6 +46,10 @@ class Course(models.Model):
     average = models.FloatField(default=0)
     attendee_count = models.IntegerField(default=0)
 
+    department = models.ForeignKey(
+        to="Department", related_name="courses", on_delete=models.SET_NULL, null=True
+    )
+
     watson_rank = 0.0
 
     def course_level(self):
@@ -67,6 +71,12 @@ class Course(models.Model):
     # FIX Permalink depercated
     def get_absolute_url(self):
         return reverse("course", kwargs={"course_code": self.code})
+
+
+class Semester(models.TextChoices):
+    SPRING = "SPRING", "Vår"
+    SUMMER = "SUMMER", "Sommer"
+    AUTUMN = "AUTUMN", "Høst"
 
 
 class GradeManager(models.Manager):
@@ -113,6 +123,7 @@ class Grade(models.Model):
 
     class Meta:
         default_manager_name = "objects"
+        unique_together = (("course", "semester_code",),)
 
 
 class Tag(models.Model):
