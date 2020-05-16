@@ -103,7 +103,7 @@ def scrape_list_refresh_action(url_path: str):
         detail=False,
         methods=["POST"],
         serializer_class=TIAObjectListRefreshSerializer,
-        permission_classes=(permissions.AllowAny,),  # TODO: RESTRICT TO SUPER USER
+        permission_classes=(permissions.IsAdminUser,),
     )
 
 
