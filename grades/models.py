@@ -23,7 +23,7 @@ class Course(models.Model):
 
     norwegian_name = models.CharField("Norwegian Name", max_length=255)
     short_name = models.CharField("Short name", max_length=50)
-    code = models.CharField("Code", max_length=15)
+    code = models.CharField("Code", max_length=15, unique=True)
     faculty_code = models.IntegerField("Faculty Code", default=0)
     exam_type = models.CharField("Exam Type", max_length=255, default="")
     grade_type = models.CharField("Grade Type", max_length=255, default="")
@@ -32,7 +32,7 @@ class Course(models.Model):
 
     english_name = models.CharField("English name", max_length=255)
     credit = models.FloatField("Credit", default=7.5)
-    study_level = models.SmallIntegerField()
+    study_level = models.SmallIntegerField(default=0)
     taught_in_spring = models.BooleanField(default=False)
     taught_in_autumn = models.BooleanField(default=False)
     taught_from = models.IntegerField()
@@ -186,10 +186,11 @@ Beskrivelse:
 
 
 class InstitutionalUnit(models.Model):
-    key = models.IntegerField("Nøkkel", unique=True, help_text="Nøkkel fra Karstat")
-    norwegian_name = models.CharField("Norsk navn", max_length=256, default="")
+    acronym = models.CharField("Akronym", max_length=32)
+    norwegian_name = models.CharField("Norsk navn", max_length=256)
     english_name = models.CharField("Engelsk navn", max_length=256, default="")
-    short_name = models.CharField("Forkortelse", max_length=32, default="")
+    organization_unit_id = models.IntegerField("OuID", unique=True, help_text="NTNU ID")
+    nsd_code = models.CharField("Code fra NSD", max_length=32)
 
     def __str__(self):
         return self.norwegian_name
@@ -199,24 +200,24 @@ class InstitutionalUnit(models.Model):
 
 
 class Faculty(InstitutionalUnit):
+    faculty_id = models.PositiveIntegerField("FakultetsID", unique=True)
+
     class Meta:
         verbose_name = "Fakultet"
         verbose_name_plural = "Fakulteter"
-        ordering = ("key",)
+        ordering = ("norwegian_name",)
 
 
 class Department(InstitutionalUnit):
     faculty = models.ForeignKey(
-        to=Faculty, related_name="departments", on_delete=models.CASCADE
+        to=Faculty, related_name="departments", on_delete=models.CASCADE, null=True,
     )
-
-    def __str__(self):
-        return self.norwegian_name
+    department_id = models.PositiveIntegerField("InstituttsID")
 
     class Meta:
         verbose_name = "Institutt"
         verbose_name_plural = "Institutter"
-        ordering = ("key",)
+        ordering = ("norwegian_name",)
 
 
 class NavbarItems(object):
