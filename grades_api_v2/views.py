@@ -7,6 +7,7 @@ from rest_framework.schemas.views import SchemaView
 from rest_framework.settings import api_settings
 from rest_framework_extensions.mixins import NestedViewSetMixin
 
+from clients.karstat import KarstatGradeClient
 from clients.tia import TIACourseClient, TIADepartmentClient, TIAFacultyClient
 from grades.models import Course, Grade, Tag, Report, CourseTag, Faculty, Department
 
@@ -24,6 +25,7 @@ from .serializers import (
     FacultySerializer,
     DepartmentSerializer,
     TIAObjectListRefreshSerializer,
+    KarstatGradeReportSerializer,
 )
 
 
@@ -145,6 +147,30 @@ class TIAScraperViewSet(viewsets.GenericViewSet):
             object_serializer_class=DepartmentSerializer,
             scraper_client_class=TIADepartmentClient,
         )
+
+
+class KarstatScraperViewSet(viewsets.GenericViewSet):
+    @action(
+        url_path="grade-report",
+        detail=False,
+        methods=["POST"],
+        serializer_class=KarstatGradeReportSerializer,
+        permission_classes=(permissions.IsAdminUser,),
+    )
+    def grade_report(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.data
+        department = Department.objects.get(pk=data.get("department"))
+        client = KarstatGradeClient()
+        client.login(
+            username=data.get("username"), password=data.get("password"),
+        )
+        grades = client.update_grade_stats(
+            department=department, year=data.get("year"), semester=data.get("semester"),
+        )
+        grades_serializer = GradeSerializer(instance=grades, many=True)
+        return Response(status=status.HTTP_200_OK, data=grades_serializer.data)
 
 
 class SwaggerUIView(TemplateView):

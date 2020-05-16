@@ -1,6 +1,15 @@
 from rest_framework import serializers
 
-from grades.models import Grade, Course, Tag, Report, CourseTag, Faculty, Department
+from grades.models import (
+    Grade,
+    Course,
+    Tag,
+    Report,
+    CourseTag,
+    Faculty,
+    Department,
+    Semester,
+)
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -133,4 +142,21 @@ class TIAObjectListRefreshSerializer(serializers.Serializer):
             "password",
             "limit",
             "skip",
+        )
+
+
+class KarstatGradeReportSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+    department = serializers.PrimaryKeyRelatedField(queryset=Department.objects.all())
+    year = serializers.IntegerField()
+    semester = serializers.ChoiceField(choices=Semester.choices)
+
+    class Meta:
+        fields = (
+            "username",
+            "password",
+            "department",
+            "year",
+            "semester",
         )
