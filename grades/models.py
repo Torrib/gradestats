@@ -35,7 +35,7 @@ class Course(models.Model):
     study_level = models.SmallIntegerField(default=0)
     taught_in_spring = models.BooleanField(default=False)
     taught_in_autumn = models.BooleanField(default=False)
-    taught_from = models.IntegerField()
+    taught_from = models.IntegerField(default=0)
     taught_in_english = models.BooleanField(default=False)
     last_year_taught = models.IntegerField(default=0)
 
