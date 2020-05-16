@@ -7,6 +7,7 @@ from rest_framework.schemas.views import SchemaView
 from rest_framework.settings import api_settings
 from rest_framework_extensions.mixins import NestedViewSetMixin
 
+from clients.course_pages import CoursePagesClient
 from clients.karstat import KarstatGradeClient
 from clients.tia import TIACourseClient, TIADepartmentClient, TIAFacultyClient
 from grades.models import Course, Grade, Tag, Report, CourseTag, Faculty, Department
@@ -45,6 +46,20 @@ class CourseViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
         "average",
         "attendee_count",
     )
+
+    @action(
+        url_path="refresh-course-pages",
+        detail=True,
+        methods=["POST"],
+        permission_classes=(permissions.AllowAny,),
+    )
+    def refresh_course_pages(self, request, *args, **kwargs):
+        course = self.get_object()
+        client = CoursePagesClient()
+        client.update_course(course_code=course.code)
+        course.refresh_from_db()
+        serializer = self.get_serializer(instance=course)
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
 class GradeViewSet(NestedViewSetMixin, viewsets.ModelViewSet):

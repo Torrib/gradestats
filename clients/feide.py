@@ -1,21 +1,9 @@
-import re
-from bs4 import BeautifulSoup
-import requests
-
-from grades.models import Course
+from .client import Client
 
 
-class FeideClient:
+class FeideClient(Client):
     login_url = "https://idp.feide.no/simplesaml/module.php/feide/login.php"
     init_login_url = ""
-    session = None
-
-    def __init__(self):
-        super().__init__()
-        self.session = requests.session()
-
-    def init_soup(self, page_text: str):
-        return BeautifulSoup(page_text, "html5lib")
 
     def login(self, username: str, password: str):
         login_form_data = dict(
