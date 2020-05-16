@@ -82,7 +82,6 @@ class ReportViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 
 
 class FacultyViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
-    lookup_field = "faculty_id"
     serializer_class = FacultySerializer
     queryset = Faculty.objects.all()
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
@@ -90,7 +89,6 @@ class FacultyViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 
 
 class DepartmentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
-    lookup_field = "department_id"
     serializer_class = DepartmentSerializer
     queryset = Department.objects.all()
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
