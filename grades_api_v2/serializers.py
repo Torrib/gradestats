@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from grades.models import Grade, Course, Tag, Report, CourseTag
+from grades.models import Grade, Course, Tag, Report, CourseTag, Faculty, Department
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -107,3 +107,30 @@ class ReportSerializer(serializers.ModelSerializer):
         model = Report
         fields = ("id", "created_date", "description", "course", "contact_email")
         read_only_fields = ("created_date",)
+
+
+class FacultySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Faculty
+        fields = "__all__"
+
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = "__all__"
+
+
+class TIAObjectListRefreshSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+    limit = serializers.IntegerField(default=100)
+    skip = serializers.IntegerField(default=0)
+
+    class Meta:
+        fields = (
+            "username",
+            "password",
+            "limit",
+            "skip",
+        )

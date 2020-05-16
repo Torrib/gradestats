@@ -26,5 +26,14 @@ CourseTagsRouter = CoursesRouter.register(
 )
 TagRouter = router.register("tags", views.TagViewSet, basename="tags")
 ReportRouter = router.register("reports", views.ReportViewSet, basename="reports")
+FacultiesRouter = router.register(
+    "faculties", views.FacultyViewSet, basename="faculties"
+)
+DepartmentsRouter = router.register(
+    "departments", views.DepartmentViewSet, basename="departments"
+)
+TIAScraperRouter = router.register(
+    "scrapers/tia", views.TIAScraperViewSet, basename="scrapers-tia"
+)
 
 urlpatterns += router.urls
