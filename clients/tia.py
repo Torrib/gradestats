@@ -127,6 +127,9 @@ class TIACourseClient(TIAClient):
         course_data = content.get("fs_emne")
 
         code = course_data.get("emnekode")
+        # Course codes with slashes don't work well as URLs.
+        if code.find("/") >= 0:
+            code = code.replace("/", "-")
         credit = course_data.get("studiepoeng")
 
         course_names = course_data.get("name")
