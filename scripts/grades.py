@@ -15,7 +15,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gradestats.settings")
 django.setup()
 
 # Import Django models after Django setup
-from grades.models import Grade, Course
+from grades.models import Grade, Course, Semester
 
 session = requests.session()
 
@@ -100,21 +100,21 @@ def parse_data(data, exam, faculty):
     rows_info = table_info.find_all("tr")
     td_info = rows_info[1].find_all("td")
     temp = td_info[1].string.split("-")
-    semester_code = ""
+    semester = ""
 
     if exam == "VÅR":
-        semester_code = "V"
+        semester = Semester.SPRING
     elif exam == "SOM":
-        semester_code = "S"
+        semester = Semester.SUMMER
     elif exam == "HØST":
-        semester_code = "H"
+        semester = Semester.AUTUMN
 
-    semester_code += "%s" % (temp[0].strip())
+    year = int(temp[0].strip())
 
     # Grade info
     rows_grades = soup.find_all(class_="tableRow")
     # row 5 and down is subjects
-    print("Found %d exams from %s" % (len(rows_grades) - 1, semester_code))
+    print(f"Found {len(rows_grades) - 1} exams from {semester} {year}")
     for i in range(0, len(rows_grades) - 1):
         td_grades = rows_grades[i].find_all("td")
         subject_code = td_grades[0].string.split("-")
@@ -129,13 +129,14 @@ def parse_data(data, exam, faculty):
         else:
             course = subjects[0]
 
-        grades = Grade.objects.filter(course=course, semester_code=semester_code)
+        grades = Grade.objects.filter(course=course, semester=semester, year=year)
         if not grades:
             grades = Grade()
             attending = int(td_grades[5].string.strip())
 
             grades.course = course
-            grades.semester_code = semester_code
+            grades.semester = semester
+            grades.year = year
             grades.f = int(td_grades[6].string.strip())
 
             passing = attending - grades.f
@@ -145,9 +146,6 @@ def parse_data(data, exam, faculty):
             grades.c = round((int(td_grades[15].string.strip()) / 100.0) * passing)
             grades.d = round((int(td_grades[16].string.strip()) / 100.0) * passing)
             grades.e = round((int(td_grades[17].string.strip()) / 100.0) * passing)
-            grades.digital_exam = course_has_digital_exam_semester(
-                subject_code, semester_code[1:5], semester_code[0:1]
-            )
 
             s = grades.a + grades.b + grades.c + grades.d + grades.e + grades.f
 

@@ -55,20 +55,6 @@ class KarstatGradeClient(KarstatClient):
         elif semester == Semester.AUTUMN:
             return "HØST"
 
-    @staticmethod
-    def get_semester_letter(semester: Semester):
-        if semester == Semester.SPRING:
-            return "V"
-        elif semester == Semester.SUMMER:
-            return "S"
-        elif semester == Semester.AUTUMN:
-            return "H"
-
-    @classmethod
-    def build_semester_code(cls, year: int, semester: Semester):
-        semester_letter = cls.get_semester_letter(semester)
-        return f"{semester_letter}{year}"
-
     def request_grade_reports_content(
         self, department: Department, year: int, semester: Semester
     ):
@@ -107,8 +93,6 @@ class KarstatGradeClient(KarstatClient):
         semester: Semester,
     ):
         page_content = self.init_soup(page_content_text)
-
-        semester_code = self.build_semester_code(year, semester)
 
         # Grade info
         rows_grades = page_content.find_all(class_="tableRow")
@@ -152,7 +136,8 @@ class KarstatGradeClient(KarstatClient):
 
             grade_data = {
                 "course_id": course.id,
-                "semester_code": semester_code,
+                "semester": str(semester),
+                "year": year,
                 "average_grade": average_grade,
                 "passed": passed,
                 "a": a,
@@ -171,17 +156,19 @@ class KarstatGradeClient(KarstatClient):
         grades = []
         for grade_data in grades_data:
             course_id = grade_data.get("course_id")
-            semester_code = grade_data.get("semester_code")
+            semester = grade_data.get("semester")
+            year = grade_data.get("year")
             try:
                 grade = Grade.objects.get(
-                    course_id=course_id, semester_code=semester_code
+                    course_id=course_id, semester=semester, year=year,
                 )
                 Grade.objects.filter(
-                    course_id=course_id, semester_code=semester_code
+                    course_id=course_id, semester=semester, year=year,
                 ).update(**grade_data)
                 grade.refresh_from_db()
             except Grade.DoesNotExist:
                 grade = Grade.objects.create(**grade_data)
+
             grades.append(grade)
 
         return grades

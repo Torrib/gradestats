@@ -14,8 +14,8 @@ class CourseAdmin(admin.ModelAdmin):
 @admin.register(Grade)
 class GradeAdmin(admin.ModelAdmin):
     search_fields = ["course__code"]
-    list_filter = ("semester_code", "digital_exam")
-    list_display = ("course", "semester_code", "average_grade")
+    list_filter = ("semester", "year", "digital_exam")
+    list_display = ("course", "semester", "year", "average_grade")
     model = Grade
 
 

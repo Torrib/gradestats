@@ -3,6 +3,8 @@ from grades.models import *
 
 
 class GradeSerializer(serializers.ModelSerializer):
+    semester_code = serializers.CharField()
+
     class Meta:
         model = Grade
         fields = (
