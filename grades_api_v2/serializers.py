@@ -166,3 +166,18 @@ class KarstatGradeReportSerializer(serializers.Serializer):
             "year",
             "semester",
         )
+
+
+class NSDGradeReportSerializer(serializers.Serializer):
+    course = serializers.SlugRelatedField(
+        queryset=Course.objects.all(), slug_field="code",
+    )
+    year = serializers.IntegerField()
+    semester = serializers.ChoiceField(choices=Semester.choices)
+
+    class Meta:
+        fields = (
+            "course",
+            "year",
+            "semester",
+        )
