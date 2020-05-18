@@ -79,9 +79,9 @@ def create_course(code, faculty):
         for info in data["course"]["infoType"]:
             if info["code"] == "INNHOLD" and "text" in info:
                 course.content = info["text"]
-            if info["code"] == u"LÆRFORM" and "text" in info:
+            if info["code"] == "LÆRFORM" and "text" in info:
                 course.learning_form = info["text"]
-            if info["code"] == u"MÅL" and "text" in info:
+            if info["code"] == "MÅL" and "text" in info:
                 course.learning_goal = info["text"]
     course.faculty_code = faculty
     course.has_had_digital_exam = course_has_digital_exam(code)
