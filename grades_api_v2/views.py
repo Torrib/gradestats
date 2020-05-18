@@ -9,8 +9,17 @@ from rest_framework_extensions.mixins import NestedViewSetMixin
 
 from clients.course_pages import CoursePagesClient
 from clients.karstat import KarstatGradeClient
+from clients.nsd import NSDGradeClient
 from clients.tia import TIACourseClient, TIADepartmentClient, TIAFacultyClient
-from grades.models import Course, Grade, Tag, Report, CourseTag, Faculty, Department
+from grades.models import (
+    Course,
+    Grade,
+    Tag,
+    Report,
+    CourseTag,
+    Faculty,
+    Department,
+)
 
 from .filters import CourseFilter, GradeFilter
 from .permissions import (
@@ -27,6 +36,7 @@ from .serializers import (
     DepartmentSerializer,
     TIAObjectListRefreshSerializer,
     KarstatGradeReportSerializer,
+    NSDGradeReportSerializer,
 )
 
 
@@ -186,6 +196,28 @@ class KarstatScraperViewSet(viewsets.GenericViewSet):
         )
         grades_serializer = GradeSerializer(instance=grades, many=True)
         return Response(status=status.HTTP_200_OK, data=grades_serializer.data)
+
+
+class NSDScraperViewSet(viewsets.GenericViewSet):
+    @action(
+        url_path="grade-report",
+        detail=False,
+        methods=["POST"],
+        serializer_class=NSDGradeReportSerializer,
+        permission_classes=(permissions.IsAdminUser,),
+    )
+    def grade_report(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.data
+        client = NSDGradeClient()
+        grade = client.update_grade(
+            course_code=data.get("course"),
+            year=data.get("year"),
+            semester=data.get("semester"),
+        )
+        grade_serializer = GradeSerializer(instance=grade)
+        return Response(status=status.HTTP_200_OK, data=grade_serializer.data)
 
 
 class SwaggerUIView(TemplateView):

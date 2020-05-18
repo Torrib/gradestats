@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import ExpressionWrapper, F
+from django.db.models.functions import Concat
+from django.db.models import ExpressionWrapper, F, Case, When, Value
 from collections import OrderedDict
 from django.urls import reverse
 
@@ -92,6 +93,19 @@ class GradeManager(models.Manager):
                     output_field=models.IntegerField(),
                 )
             )
+            .annotate(
+                semester_letter=Case(
+                    When(semester=Semester.SPRING, then=Value("V")),
+                    When(semester=Semester.SUMMER, then=Value("S")),
+                    When(semester=Semester.AUTUMN, then=Value("H")),
+                    output_field=models.CharField(),
+                )
+            )
+            .annotate(
+                semester_code=Concat(
+                    F("semester_letter"), F("year"), output_field=models.CharField(),
+                )
+            )
         )
 
 
@@ -99,7 +113,8 @@ class Grade(models.Model):
     objects = GradeManager()
 
     course = models.ForeignKey(Course, related_name="grades", on_delete=models.CASCADE)
-    semester_code = models.CharField("Semester", max_length=10)
+    year = models.PositiveSmallIntegerField("År")
+    semester = models.CharField("Semester", max_length=32, choices=Semester.choices)
 
     average_grade = models.FloatField()
     digital_exam = models.BooleanField(default=False)
@@ -112,18 +127,27 @@ class Grade(models.Model):
     e = models.SmallIntegerField(default=0)
     f = models.SmallIntegerField(default=0)
 
+    @property
+    def _semester_letter(self):
+        lookup = {
+            str(Semester.SPRING): "V",
+            str(Semester.SUMMER): "S",
+            str(Semester.AUTUMN): "H",
+        }
+        return lookup[self.semester]
+
     def __unicode__(self):
-        return self.semester_code
+        return f"{self._semester_letter}{self.year}"
 
     def __str__(self):
-        return self.semester_code
+        return f"{self._semester_letter}{self.year}"
 
     def get_num_attendees(self):
         return self.a + self.b + self.c + self.d + self.e + self.f
 
     class Meta:
         default_manager_name = "objects"
-        unique_together = (("course", "semester_code",),)
+        unique_together = (("course", "semester", "year",),)
 
 
 class Tag(models.Model):

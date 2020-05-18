@@ -49,12 +49,17 @@ class CourseSerializer(serializers.ModelSerializer):
 
 class GradeSerializer(serializers.ModelSerializer):
     attendee_count = serializers.IntegerField()
+    semester_display = serializers.CharField(source="get_semester_display")
+    semester_code = serializers.CharField()
 
     class Meta:
         model = Grade
         fields = (
             "id",
             "course",
+            "semester",
+            "semester_display",
+            "year",
             "semester_code",
             "average_grade",
             "digital_exam",
@@ -77,7 +82,7 @@ class CourseTagSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Handle tag creation manually because a tag by the given name may already exists.
+        Handle tag creation manually because a tag by the given name may already exist.
         """
         name = validated_data.pop("tag").pop("tag")
         tag, created = Tag.objects.get_or_create(tag=name)
@@ -158,6 +163,21 @@ class KarstatGradeReportSerializer(serializers.Serializer):
             "username",
             "password",
             "department",
+            "year",
+            "semester",
+        )
+
+
+class NSDGradeReportSerializer(serializers.Serializer):
+    course = serializers.SlugRelatedField(
+        queryset=Course.objects.all(), slug_field="code",
+    )
+    year = serializers.IntegerField()
+    semester = serializers.ChoiceField(choices=Semester.choices)
+
+    class Meta:
+        fields = (
+            "course",
             "year",
             "semester",
         )

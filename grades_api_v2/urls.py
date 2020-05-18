@@ -38,5 +38,8 @@ TIAScraperRouter = router.register(
 KarstatScraperRouter = router.register(
     "scrapers/karstat", views.KarstatScraperViewSet, basename="scrapers-karstat"
 )
+NSDScraperRouter = router.register(
+    "scrapers/nsd", views.NSDScraperViewSet, basename="scrapers-nsd"
+)
 
 urlpatterns += router.urls
