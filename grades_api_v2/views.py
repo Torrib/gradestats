@@ -204,7 +204,7 @@ class NSDScraperViewSet(viewsets.GenericViewSet):
         detail=False,
         methods=["POST"],
         serializer_class=NSDGradeReportSerializer,
-        permission_classes=(permissions.AllowAny,),
+        permission_classes=(permissions.IsAdminUser,),
     )
     def grade_report(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
