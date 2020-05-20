@@ -11,7 +11,7 @@ exec uwsgi --chdir=/srv/app \
     --socket=0.0.0.0:8080 \
     --http=0.0.0.0:8081 \
     --processes=5 \
-    --harakiri=20 \
+    --harakiri=300 \
     --max-requests=5000 \
     --offload-threads=4 \
     --static-map=/static=/srv/app/collected_static \
