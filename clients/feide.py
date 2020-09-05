@@ -2,23 +2,21 @@ from .client import Client
 
 
 class FeideClient(Client):
-    login_url = "https://idp.feide.no/simplesaml/module.php/feide/login.php"
+    login_url = "https://idp.feide.no/simplesaml/module.php/feide/login"
     init_login_url = ""
 
     def login(self, username: str, password: str):
         login_form_data = dict(
-            feidename=username, password=password, org="ntnu.no", asLen="255"
+            feidename=username, password=password, has_js=0, inside_iframe=0
         )
         feide_sso_page = self.session.get(self.init_login_url)
 
         sso_page_soup = self.init_soup(feide_sso_page.text)
 
-        sso_form = sso_page_soup.find("form", {"name": "f"})
-        auth_state = sso_form.find("input", {"name": "AuthState"}).get("value")
+        auth_state = sso_page_soup.find("input", {"name": "AuthState"}).get("value")
+        login_org = sso_page_soup.find("input", {"name": "org"}).get("value")
 
-        login_form_data["AuthState"] = auth_state
-        login_form_action = sso_form["action"]
-        login_url = self.login_url + login_form_action
+        login_url = f"{self.login_url}?org={login_org}&AuthState={auth_state}"
 
         login_response = self.session.post(login_url, data=login_form_data)
         login_response_soup = self.init_soup(login_response.text)
