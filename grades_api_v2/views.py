@@ -26,6 +26,8 @@ from .filters import CourseFilter, GradeFilter
 from .permissions import (
     DjangoModelPermissionOrAnonCreateOnly,
     IsAuthenticatedOrReadOnlyOrIsAdminUserOrOwnerEdit,
+    UserViewPermission,
+    IsAdminUserOrReadOnly,
 )
 from .serializers import (
     CourseSerializer,
@@ -113,7 +115,7 @@ class ReportViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (UserViewPermission,)
     pagination_class = pagination.LimitOffsetPagination
 
     def get_queryset(self):
@@ -125,7 +127,10 @@ class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 
 
 class UserCourseTagViewSet(CourseTagViewSet):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (
+        permissions.IsAuthenticated,
+        IsAdminUserOrReadOnly,
+    )
 
     def get_queryset(self):
         queryset = super().get_queryset()
