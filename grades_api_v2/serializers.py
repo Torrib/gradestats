@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from grades.models import (
@@ -79,6 +80,14 @@ class CourseTagSerializer(serializers.ModelSerializer):
     course = serializers.SlugRelatedField(
         queryset=Course.objects.all(), slug_field="code",
     )
+    user = serializers.SerializerMethodField()
+
+    def get_user(self, obj: CourseTag):
+        request = self.context.get("request")
+        user: User = request.user
+        if user.is_staff:
+            return obj.created_by_id
+        return None
 
     def create(self, validated_data):
         """
@@ -91,11 +100,7 @@ class CourseTagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CourseTag
-        fields = (
-            "id",
-            "name",
-            "course",
-        )
+        fields = ("id", "name", "course", "user")
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -110,6 +115,29 @@ class TagSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "courses",
+        )
+
+
+class UserSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+
+    def get_full_name(self, obj: User):
+        return obj.get_full_name()
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "email",
+            "username",
+            "full_name",
+            "first_name",
+            "last_name",
+            "is_superuser",
+            "is_staff",
+            "is_active",
+            "date_joined",
+            "last_login",
         )
 
 
