@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 from rest_framework import viewsets, permissions, pagination, status
 from rest_framework.decorators import action
@@ -34,6 +35,7 @@ from .serializers import (
     CourseTagSerializer,
     FacultySerializer,
     DepartmentSerializer,
+    UserSerializer,
     TIAObjectListRefreshSerializer,
     KarstatGradeReportSerializer,
     NSDGradeReportSerializer,
@@ -106,6 +108,31 @@ class ReportViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     queryset = Report.objects.all()
     permission_classes = (DjangoModelPermissionOrAnonCreateOnly,)
     pagination_class = pagination.LimitOffsetPagination
+
+
+class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
+    pagination_class = pagination.LimitOffsetPagination
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user: User = self.request.user
+        if not user.is_staff:
+            return queryset.filter(pk=user.id)
+        return queryset
+
+
+class UserCourseTagViewSet(CourseTagViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user: User = self.request.user
+        if not user.is_staff:
+            return queryset.filter(created_by=user.id)
+        return queryset
 
 
 class FacultyViewSet(NestedViewSetMixin, viewsets.ModelViewSet):

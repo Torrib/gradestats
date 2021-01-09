@@ -32,6 +32,13 @@ FacultiesRouter = router.register(
 DepartmentsRouter = router.register(
     "departments", views.DepartmentViewSet, basename="departments"
 )
+UserRouter = router.register("users", views.UserViewSet, basename="users")
+UserCourseTagsRouter = UserRouter.register(
+    "tags",
+    views.UserCourseTagViewSet,
+    basename="user-tags",
+    parents_query_lookups=["created_by"],
+)
 TIAScraperRouter = router.register(
     "scrapers/tia", views.TIAScraperViewSet, basename="scrapers-tia"
 )
