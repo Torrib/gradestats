@@ -180,6 +180,23 @@ class CourseTag(models.Model):
         unique_together = (("course", "tag",),)
 
 
+class Favourite(models.Model):
+    user = models.ForeignKey(
+        User, related_name="favourite_courses", on_delete=models.CASCADE
+    )
+    course = models.ForeignKey(
+        Course, related_name="user_favourites", on_delete=models.CASCADE
+    )
+    created_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} ★ {self.course.code}"
+
+    class Meta:
+        unique_together = (("user", "course"),)
+        ordering = ("-created_date",)
+
+
 class Report(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     description = models.TextField(default="")

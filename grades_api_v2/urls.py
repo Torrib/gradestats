@@ -26,6 +26,9 @@ CourseTagsRouter = CoursesRouter.register(
 )
 TagRouter = router.register("tags", views.TagViewSet, basename="tags")
 ReportRouter = router.register("reports", views.ReportViewSet, basename="reports")
+FavouritesRouter = router.register(
+    "favourites", views.FavouritesViewSet, basename="favourites"
+)
 FacultiesRouter = router.register(
     "faculties", views.FacultyViewSet, basename="faculties"
 )
@@ -37,7 +40,13 @@ UserCourseTagsRouter = UserRouter.register(
     "tags",
     views.UserCourseTagViewSet,
     basename="user-tags",
-    parents_query_lookups=["created_by"],
+    parents_query_lookups=["created_by__username"],
+)
+UserFavouritesRouter = UserRouter.register(
+    "favourites",
+    views.UserFavouritesViewSet,
+    basename="user-favourites",
+    parents_query_lookups=["user__username"],
 )
 TIAScraperRouter = router.register(
     "scrapers/tia", views.TIAScraperViewSet, basename="scrapers-tia"

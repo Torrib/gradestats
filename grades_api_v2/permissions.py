@@ -49,6 +49,12 @@ class IsAuthenticatedOrReadOnlyOrIsAdminUserOrOwnerEdit(
         return bool(user and user.is_staff) or obj.created_by == user
 
 
+class IsFavouriteOwnerPermission(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        return obj.user == user
+
+
 class UserViewPermission(permissions.IsAuthenticated):
     """
     Allow authenticated to read.

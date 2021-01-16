@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.views.generic import TemplateView
-from rest_framework import viewsets, permissions, pagination, status
+from rest_framework import viewsets, permissions, pagination, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.schemas import openapi
@@ -16,6 +16,7 @@ from grades.models import (
     Course,
     Grade,
     Tag,
+    Favourite,
     Report,
     CourseTag,
     Faculty,
@@ -28,11 +29,13 @@ from .permissions import (
     IsAuthenticatedOrReadOnlyOrIsAdminUserOrOwnerEdit,
     UserViewPermission,
     IsAdminUserOrReadOnly,
+    IsFavouriteOwnerPermission,
 )
 from .serializers import (
     CourseSerializer,
     GradeSerializer,
     TagSerializer,
+    FavouriteSerializer,
     ReportSerializer,
     CourseTagSerializer,
     FacultySerializer,
@@ -105,6 +108,13 @@ class TagViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     pagination_class = pagination.LimitOffsetPagination
 
 
+class FavouritesViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    serializer_class = FavouriteSerializer
+    queryset = Favourite.objects.all()
+    permission_classes = (permissions.IsAdminUser,)
+    pagination_class = pagination.LimitOffsetPagination
+
+
 class ReportViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     serializer_class = ReportSerializer
     queryset = Report.objects.all()
@@ -113,6 +123,7 @@ class ReportViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 
 
 class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    lookup_field = "username"
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = (UserViewPermission,)
@@ -138,6 +149,28 @@ class UserCourseTagViewSet(CourseTagViewSet):
         if not user.is_staff:
             return queryset.filter(created_by=user.id)
         return queryset
+
+
+class UserFavouritesViewSet(
+    NestedViewSetMixin,
+    viewsets.GenericViewSet,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+):
+    serializer_class = FavouriteSerializer
+    queryset = Favourite.objects.all()
+    permission_classes = (IsFavouriteOwnerPermission,)
+    pagination_class = pagination.LimitOffsetPagination
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(user=user)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user: User = self.request.user
+        return queryset.filter(user=user.id)
 
 
 class FacultyViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
