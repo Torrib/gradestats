@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "mozilla_django_oidc",
     "grades",
+    "authentication",
     "rest_framework",
     "grades_api",
     "grades_api_v2",
@@ -57,7 +58,7 @@ MIDDLEWARE = (
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
-    "grades.authentication.OIDCUserAuthenticationBackend",
+    "authentication.backend.OIDCUserAuthenticationBackend",
 )
 
 ROOT_URLCONF = "gradestats.urls"

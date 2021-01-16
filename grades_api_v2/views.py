@@ -113,6 +113,7 @@ class ReportViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
 
 
 class UserViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
+    lookup_field = "username"
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = (UserViewPermission,)

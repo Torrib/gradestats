@@ -37,7 +37,7 @@ UserCourseTagsRouter = UserRouter.register(
     "tags",
     views.UserCourseTagViewSet,
     basename="user-tags",
-    parents_query_lookups=["created_by"],
+    parents_query_lookups=["created_by__username"],
 )
 TIAScraperRouter = router.register(
     "scrapers/tia", views.TIAScraperViewSet, basename="scrapers-tia"
