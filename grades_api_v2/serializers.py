@@ -10,6 +10,7 @@ from grades.models import (
     Faculty,
     Department,
     Semester,
+    Favourite,
 )
 
 
@@ -115,6 +116,24 @@ class TagSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "courses",
+        )
+
+
+class FavouriteSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(
+        queryset=User.objects.all(), slug_field="username"
+    )
+    course = serializers.SlugRelatedField(
+        queryset=Course.objects.all(), slug_field="code"
+    )
+
+    class Meta:
+        model = Favourite
+        fields = (
+            "id",
+            "user",
+            "course",
+            "created_date",
         )
 
 
