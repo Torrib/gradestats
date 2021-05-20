@@ -1,4 +1,4 @@
-FROM python:3.8-alpine3.11
+FROM python:3.8-alpine3.13
 
 LABEL maintainer=dotkom@online.ntnu.no
 
@@ -6,6 +6,7 @@ ENV NAME=gradestats
 ENV DIR=/srv/app
 
 RUN apk add --update --no-cache \
+    cargo \
     postgresql-dev \
     build-base \
     libressl-dev \
