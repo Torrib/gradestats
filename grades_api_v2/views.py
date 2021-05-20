@@ -281,6 +281,8 @@ class NSDScraperViewSet(viewsets.GenericViewSet):
             year=data.get("year"),
             semester=data.get("semester"),
         )
+        if not grade:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         grade_serializer = GradeSerializer(instance=grade)
         return Response(status=status.HTTP_200_OK, data=grade_serializer.data)
 
