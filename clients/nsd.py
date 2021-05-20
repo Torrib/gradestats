@@ -1,4 +1,5 @@
 from django.db.models import TextChoices
+from json import JSONDecodeError
 
 from .client import Client
 
@@ -146,6 +147,7 @@ class NSDGradeClient(Client):
             data = {
                 "passed": passed,
                 "f": failed,
+                "average_grade": 0,
             }
         else:
             average_grade = (a * 5.0 + b * 4 + c * 3 + d * 2 + e) / student_count
@@ -181,17 +183,22 @@ class NSDGradeClient(Client):
         except Grade.DoesNotExist:
             grade = Grade.objects.create(**grade_data)
 
-        return grade
+        return Grade.objects.get(pk=grade.id)
 
     def request_grade_data(self, course_code: str, year: int, semester: Semester):
         query = self.build_query(course_code, year, semester)
         url = self.get_json_table_url()
         response = self.session.post(url, json=query)
-        results = response.json()
+        try:
+            results = response.json()
+        except JSONDecodeError:
+            results = []
         return results
 
     def update_grade(self, course_code: str, year: int, semester: Semester):
         results = self.request_grade_data(course_code, year, semester)
+        if len(results) == 0:
+            return None
         grade_data = self.build_grade_data_from_results(
             results, course_code, year, semester
         )
