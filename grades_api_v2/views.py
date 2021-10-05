@@ -50,7 +50,7 @@ from .serializers import (
 class CourseViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
     lookup_field = "code"
     serializer_class = CourseSerializer
-    queryset = Course.objects.filter(attendee_count__gt=4)
+    queryset = Course.objects.all()
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = pagination.LimitOffsetPagination
     filterset_class = CourseFilter

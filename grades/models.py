@@ -14,6 +14,7 @@ class CourseManager(models.Manager):
         queryset = (
             super()
             .get_queryset()
+            .filter(attendee_count__gt=4)
             .annotate(watson_rank=models.Value(1.0, output_field=models.FloatField()))
         )
         return queryset.distinct()
@@ -87,6 +88,7 @@ class GradeManager(models.Manager):
         return (
             super()
             .get_queryset()
+            .filter(course__attendee_count__gt=4)
             .annotate(
                 attendee_count=ExpressionWrapper(
                     F("a") + F("b") + F("c") + F("d") + F("e") + F("f") + F("passed"),
